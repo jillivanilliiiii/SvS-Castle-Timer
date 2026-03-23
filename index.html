@@ -355,6 +355,9 @@ function fbUpdate(path, value) {
 // Constants
 // =========================================================
 
+// Flag to block the normal GET READY overlay during a reopen sequence
+let isReopening = false;
+
 const BASE_TIME    = 300; // 5:00 minutes in seconds (main/counter rally)
 const ENEMY_BASE   = 295; // 4:55 minutes in seconds (enemy rally)
 const ADMIN_HASH   = "ef2a09456fa517d87905aff62ae8c262cca11656bea97e9e90b8aef87c9cdf30";
@@ -648,11 +651,11 @@ function beepStart() {
   setTimeout(() => playTone(800, 0.18, 0.35, "sine"), 110);
 }
 
-// 3x tick beep for RESTART RESTART RESTART
+// 3x long beep for RESTART RESTART RESTART
 function beepAlarm() {
-  beepTick();
-  setTimeout(() => beepTick(), 180);
-  setTimeout(() => beepTick(), 360);
+  playTone(520, 0.45, 0.30, "sine");
+  setTimeout(() => playTone(520, 0.45, 0.30, "sine"), 600);
+  setTimeout(() => playTone(520, 0.45, 0.30, "sine"), 1200);
 }
 
 // Unlock audio on first user interaction (required by browsers)
@@ -864,8 +867,12 @@ function reopenRallies() {
   setTimeout(() => {
     // Set Firebase timerStart so all clients sync correctly.
     // elapsed will be 0 exactly when the first rally (delay=0) launches.
+    // Use a special marker so the listener knows NOT to trigger runOverlay
     const launchAt = Date.now() + (REOPEN_BASE * 1000);
     fbUpdate("counter", { started: true, timerStart: launchAt });
+
+    // Clear reopen flag after overlays are done (3s countdown + 800ms START display)
+    setTimeout(() => { isReopening = false; }, (REOPEN_BASE * 1000) + 900);
 
     // Run a per-rally overlay countdown — mirrors runOverlay() logic
     counterRallies.forEach(r => {
@@ -1288,7 +1295,7 @@ function listenTeam(team) {
 
         // Only run the GET READY overlay if this is a fresh start
         const isFreshStart = !wasStarted || hadTimerStart !== newTimerStart;
-        if (isFreshStart && elapsed < 0) {
+        if (isFreshStart && elapsed < 0 && !isReopening) {
           setTimeout(() => newRallies.forEach(r => runOverlay(team, r)), 50);
         }
 
