@@ -319,46 +319,34 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const ref = (path) => db.ref('svs/' + path);
 
-// ── Audio ──
-let audioCtx=null;
-let audioUnlocked=false;
+// ── Text-to-Speech ──
+let ttsUnlocked=false;
 
-async function unlockAudio(){
-  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended')await audioCtx.resume();
-  audioUnlocked=true;
+function unlockAudio(){
+  ttsUnlocked=true;
   const hint=document.getElementById('audio-hint');
   if(hint)hint.style.display='none';
-  // Also request notification permission on first interaction
   requestNotifPermission();
 }
 
-async function playBeep(freq=520,duration=0.18,volume=0.25,type='sine'){
-  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended'){
-    try{await audioCtx.resume();}catch(e){return;}
-  }
-  const osc=audioCtx.createOscillator();
-  const gain=audioCtx.createGain();
-  osc.connect(gain);gain.connect(audioCtx.destination);
-  osc.type=type;osc.frequency.setValueAtTime(freq,audioCtx.currentTime);
-  gain.gain.setValueAtTime(0,audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(volume,audioCtx.currentTime+0.02);
-  gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+duration);
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime+duration+0.05);
+function speak(text){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==='kr'?'ko-KR':'en-US';
+  u.volume=1;u.rate=0.95;u.pitch=1;
+  window.speechSynthesis.speak(u);
 }
 
 function playCountdownBeep(count){
   if(count>0){
-    playBeep(520,0.18,0.22,'sine');
+    speak(String(count));
   }else{
-    playBeep(520,0.12,0.25,'sine');
-    setTimeout(()=>playBeep(700,0.22,0.3,'sine'),130);
+    speak(lang==='kr'?'시작':'Start');
   }
 }
 
-// Unlock audio on first touch/click anywhere
+// Unlock on first touch
 document.addEventListener('touchstart',unlockAudio,{once:true});
 document.addEventListener('click',unlockAudio,{once:true});
 
@@ -583,6 +571,8 @@ function runOverlay(team,rally){
   countEl.textContent='';
   countEl.className='row-ov-count';
   countEl.style.display='none';
+  // Speak GET READY only for first starters (delay===0) to avoid overlap
+  if(rally.delay===0)speak(lang==='kr'?'준비하세요':'Get Ready');
 
   setTimeout(()=>{
     // Re-query fresh elements after 2s
