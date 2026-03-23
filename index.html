@@ -699,10 +699,10 @@ ref('').on('value', snap=>{
     if(team!=='enemy'){
       if(newStarted&&newTimerStart){
         const elapsed=getElapsed(newTimerStart);
-        // Show overlay only if we're in the pre-launch window (elapsed < 0)
         if(!wasStarted||hadTimerStart!==newTimerStart){
           if(elapsed<0){
-            newRallies.forEach(r=>runOverlay(team,r));
+            // Small delay to ensure DOM is painted before overlay runs
+            setTimeout(()=>newRallies.forEach(r=>runOverlay(team,r)),50);
           }
         }
         startLocalTicker(team);
