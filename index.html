@@ -648,10 +648,11 @@ function beepStart() {
   setTimeout(() => playTone(800, 0.18, 0.35, "sine"), 110);
 }
 
-// 2 long alarm beeps for CANCEL AND REOPEN
+// 3x tick beep for RESTART RESTART RESTART
 function beepAlarm() {
-  playTone(660, 0.55, 0.45, "square");
-  setTimeout(() => playTone(660, 0.55, 0.45, "square"), 700);
+  beepTick();
+  setTimeout(() => beepTick(), 180);
+  setTimeout(() => beepTick(), 360);
 }
 
 // Unlock audio on first user interaction (required by browsers)
@@ -805,7 +806,7 @@ function startAllEnemy() {
 }
 
 // REOPEN: stop all enemy + counter timers, restart enemy immediately,
-// show CANCEL AND REOPEN countdown on counter rows then relaunch counter
+// show RESTART RESTART RESTART countdown on counter rows then relaunch counter
 function reopenRallies() {
   const reopenBtn = document.getElementById("reopen-btn");
   if (reopenBtn) reopenBtn.disabled = true;
@@ -837,7 +838,7 @@ function reopenRallies() {
   // ── Step 2: Play 2 long alarm beeps ──────────────────────────────
   beepAlarm();
 
-  // ── Step 3: Show CANCEL AND REOPEN on counter rows ───────────────
+  // ── Step 3: Show RESTART RESTART RESTART on counter rows ───────────────
   const counterRallies = STATE.counter.rallies;
 
   counterRallies.forEach(r => {
@@ -846,71 +847,70 @@ function reopenRallies() {
     const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
     if (!ov) return;
     ov.classList.remove("hidden");
-    if (txt) { txt.textContent = lang === "kr" ? "취소 및 재시작" : "CANCEL AND REOPEN"; txt.style.display = ""; }
+    if (txt) { txt.textContent = lang === "kr" ? "재시작 재시작 재시작" : "RESTART RESTART RESTART"; txt.style.display = ""; }
     if (cnt) { cnt.textContent = ""; cnt.style.display = "none"; }
   });
 
   if (!counterRallies.length) return;
 
-  // ── Step 4: After 1.5s start 3…2…1…START countdown ──────────────
-  // Total: 1.5s label + 3s countdown = 4.5s max before launch
-  setTimeout(() => {
+  // ── Step 4: After 1.5s start per-rally countdowns (like GET READY) ──
+  // Base = 3s (max). Rallies with delay get 3+delay seconds countdown.
+  // timerStart is set so elapsed=0 exactly when the first rally's countdown hits 0.
+  // That means timerStart = now + 1500 (label phase) + 3000 (base countdown) = now + 4500ms
 
-    // Hide label, show counter number
+  const REOPEN_BASE    = 3;          // base countdown seconds (max)
+  const LABEL_PHASE_MS = 1500;       // how long "RESTART RESTART RESTART" is shown
+
+  setTimeout(() => {
+    // Set Firebase timerStart so all clients sync correctly.
+    // elapsed will be 0 exactly when the first rally (delay=0) launches.
+    const launchAt = Date.now() + (REOPEN_BASE * 1000);
+    fbUpdate("counter", { started: true, timerStart: launchAt });
+
+    // Run a per-rally overlay countdown — mirrors runOverlay() logic
     counterRallies.forEach(r => {
       const txt = document.getElementById("reopen-txt-counter-" + r.id);
       const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
+      if (!cnt) return;
+
+      // Hide label, show countdown
       if (txt) txt.style.display = "none";
-      if (cnt) { cnt.style.display = ""; cnt.textContent = "3"; cnt.className = "reopen-count"; }
+      cnt.style.display = "";
+
+      let count = REOPEN_BASE + r.delay;
+      cnt.textContent = count;
+      cnt.className   = "reopen-count";
+      cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
+      if (r.delay === 0) beepTick();
+
+      const iv = setInterval(() => {
+        count--;
+        const cnt2 = document.getElementById("reopen-cnt-counter-" + r.id);
+        const ov2  = document.getElementById("reopen-ov-counter-" + r.id);
+        if (!cnt2) { clearInterval(iv); return; }
+
+        if (count > 0) {
+          cnt2.textContent = count;
+          cnt2.className   = "reopen-count" + (count <= 2 ? " red" : "");
+          cnt2.classList.remove("pulse"); void cnt2.offsetWidth; cnt2.classList.add("pulse");
+          if (r.delay === 0) beepTick();
+        } else {
+          clearInterval(iv);
+          cnt2.className   = "reopen-count start";
+          cnt2.textContent = L.startText;
+          if (r.delay === 0) beepStart();
+
+          // Hide overlay
+          setTimeout(() => {
+            if (ov2) ov2.classList.add("hidden");
+            const txt2 = document.getElementById("reopen-txt-counter-" + r.id);
+            if (txt2) txt2.style.display = "";
+          }, 800);
+        }
+      }, 1000);
     });
-    beepTick();
 
-    let count = 3;
-
-    const iv = setInterval(() => {
-      count--;
-
-      if (count > 0) {
-        counterRallies.forEach(r => {
-          const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
-          if (!cnt) return;
-          cnt.textContent = count;
-          cnt.className   = "reopen-count" + (count <= 1 ? " red" : "");
-          cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
-        });
-        beepTick();
-
-      } else {
-        clearInterval(iv);
-
-        // Show START
-        counterRallies.forEach(r => {
-          const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
-          if (!cnt) return;
-          cnt.className   = "reopen-count start";
-          cnt.textContent = L.startText;
-          cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
-        });
-        beepStart();
-
-        // Hide overlays after 800ms
-        setTimeout(() => {
-          counterRallies.forEach(r => {
-            const ov  = document.getElementById("reopen-ov-counter-" + r.id);
-            const txt = document.getElementById("reopen-txt-counter-" + r.id);
-            if (ov)  ov.classList.add("hidden");
-            if (txt) txt.style.display = "";
-          });
-        }, 800);
-
-        // ── Step 5: Launch Counter Rally (synced via Firebase) ───────
-        // launchAt = now so timer starts immediately at START
-        const launchAt = Date.now();
-        fbUpdate("counter", { started: true, timerStart: launchAt });
-      }
-    }, 1000);
-
-  }, 1500);
+  }, LABEL_PHASE_MS);
 }
 
 // Start a single enemy rally
@@ -1246,7 +1246,7 @@ function renderTeam(team) {
         </div>
         <div class="reopen-overlay hidden" id="reopen-ov-${team}-${rally.id}">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-            <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">CANCEL AND REOPEN</div>
+            <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">RESTART RESTART RESTART</div>
             <div class="reopen-count" id="reopen-cnt-${team}-${rally.id}" style="display:none"></div>
           </div>
         </div>
