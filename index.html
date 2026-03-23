@@ -658,6 +658,16 @@ function beepAlarm() {
   setTimeout(() => playTone(520, 0.45, 0.30, "sine"), 1200);
 }
 
+// Stop all currently scheduled/playing audio
+function stopAllAudio() {
+  try {
+    if (audioCtx) {
+      audioCtx.close();
+      audioCtx = null;
+    }
+  } catch(e) {}
+}
+
 // Unlock audio on first user interaction (required by browsers)
 document.addEventListener("click",      () => getAudioCtx(), { once: true });
 document.addEventListener("touchstart", () => getAudioCtx(), { once: true });
@@ -814,8 +824,8 @@ function reopenRallies() {
   const reopenBtn = document.getElementById("reopen-btn");
   if (reopenBtn) reopenBtn.disabled = true;
 
-  // ── Step 1: Hard-stop ALL running timers ──────────────────────────
-  // Stop all local tickers
+  // ── Step 1: Hard-stop ALL running timers + audio ──────────────────
+  stopAllAudio(); // kill any ongoing beeps immediately
   stopLocalTicker("main");
   stopLocalTicker("counter");
   if (localTickers.enemy) { clearInterval(localTickers.enemy); localTickers.enemy = null; }
