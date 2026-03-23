@@ -289,6 +289,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
     </div>
   </div>
   <div class="connecting" id="connecting">Connecting...</div>
+  <div id="audio-hint" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(126,184,255,0.15);border:1px solid rgba(126,184,255,0.3);border-radius:20px;padding:6px 16px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:#7eb8ff;z-index:200;white-space:nowrap">TAP ANYWHERE TO ENABLE SOUND</div>
   <div class="credit credit-mobile">Created by Jilli &middot; State 2691</div>
 </div>
 
@@ -318,14 +319,20 @@ const ref = (path) => db.ref('svs/' + path);
 let audioCtx=null;
 let audioUnlocked=false;
 
-function unlockAudio(){
-  if(audioUnlocked)return;
-  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+async function unlockAudio(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')await audioCtx.resume();
   audioUnlocked=true;
+  // Hide tap-to-enable hint
+  const hint=document.getElementById('audio-hint');
+  if(hint)hint.style.display='none';
 }
 
-function playBeep(freq=520,duration=0.18,volume=0.25,type='sine'){
-  if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+async function playBeep(freq=520,duration=0.18,volume=0.25,type='sine'){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended'){
+    try{await audioCtx.resume();}catch(e){return;}
+  }
   const osc=audioCtx.createOscillator();
   const gain=audioCtx.createGain();
   osc.connect(gain);gain.connect(audioCtx.destination);
@@ -339,16 +346,14 @@ function playBeep(freq=520,duration=0.18,volume=0.25,type='sine'){
 
 function playCountdownBeep(count){
   if(count>0){
-    // Gentle soft beep — 520hz sine wave, calm and noticeable
     playBeep(520,0.18,0.22,'sine');
   }else{
-    // "Start" — two quick rising tones
     playBeep(520,0.12,0.25,'sine');
     setTimeout(()=>playBeep(700,0.22,0.3,'sine'),130);
   }
 }
 
-// Unlock audio on first touch anywhere
+// Unlock audio on first touch/click anywhere
 document.addEventListener('touchstart',unlockAudio,{once:true});
 document.addEventListener('click',unlockAudio,{once:true});
 
@@ -520,7 +525,13 @@ function fireBeep(count){
   ref('beep').set({t:Date.now(),count:count});
 }
 
+function getOv(team,id){
+  const row=document.querySelector(`#list-${team} [data-id="${id}"]`);
+  if(!row)return null;
+  return row.querySelector('.row-overlay');
+}
 function runOverlay(team,rally){
+  // Re-query at each step so stale DOM is never used
   const row=document.querySelector(`#list-${team} [data-id="${rally.id}"]`);
   if(!row)return;
   const ov=row.querySelector('.row-overlay');
@@ -531,23 +542,34 @@ function runOverlay(team,rally){
   grEl.textContent=L.grText;
   countEl.textContent='';
   countEl.className='row-ov-count';
+
   setTimeout(()=>{
+    // Re-query fresh elements after 2s
+    const ov2=getOv(team,rally.id);if(!ov2)return;
+    const countEl2=ov2.querySelector('.row-ov-count');
+    const grEl2=ov2.querySelector('.row-ov-gr');
+    if(!countEl2)return;
+    grEl2.textContent=L.grText;
     let count=5+rally.delay;
-    countEl.textContent=count;pulseCt(countEl);
+    countEl2.textContent=count;pulseCt(countEl2);
     if(rally.delay===0)fireBeep(count);
+
     const cd=setInterval(()=>{
       count--;
+      const ov3=getOv(team,rally.id);
+      const ce=ov3?ov3.querySelector('.row-ov-count'):null;
+      if(!ce){clearInterval(cd);return;}
       if(count>0){
-        countEl.textContent=count;
-        countEl.className='row-ov-count'+(count<=2?' red':'');
-        pulseCt(countEl);
+        ce.textContent=count;
+        ce.className='row-ov-count'+(count<=2?' red':'');
+        pulseCt(ce);
         if(rally.delay===0)fireBeep(count);
       }else{
         clearInterval(cd);
-        countEl.className='row-ov-count start';
-        countEl.textContent=L.startText;
+        ce.className='row-ov-count start';
+        ce.textContent=L.startText;
         if(rally.delay===0)fireBeep(0);
-        setTimeout(()=>ov.classList.add('hidden'),800);
+        setTimeout(()=>{const o=getOv(team,rally.id);if(o)o.classList.add('hidden');},800);
       }
     },1000);
   },2000);
@@ -744,6 +766,13 @@ document.getElementById('inp-name').addEventListener('keydown',e=>{if(e.key==='E
 document.getElementById('inp-march').addEventListener('keydown',e=>{if(e.key==='Enter')addRally()});
 setLang('en');
 setControlsVisibility(false);
+// Show audio hint on mobile
+if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
+  setTimeout(()=>{
+    const hint=document.getElementById('audio-hint');
+    if(hint&&!audioUnlocked)hint.style.display='block';
+  },2000);
+}
 </script>
 </body>
 </html>
