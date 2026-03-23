@@ -51,6 +51,11 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   .credit-desktop{display:none}
   .credit-mobile{display:block;text-align:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:8px 0 4px;opacity:.5}
 }
+.voice-settings{position:fixed;top:80px;right:20px;z-index:90;background:rgba(10,20,60,0.97);border:1px solid var(--border2);border-radius:12px;padding:16px;width:280px;backdrop-filter:blur(10px)}
+.voice-settings label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.voice-settings select{width:100%;background:rgba(5,15,50,0.85);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:10px}
+.voice-preview-btn{width:100%;padding:8px;background:var(--accent);border:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;color:#000;cursor:pointer}
+@media(max-width:600px){.voice-settings{top:auto;bottom:70px;right:10px;left:10px;width:auto}}
 
 /* Status dot */
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-right:5px;vertical-align:middle}
@@ -231,9 +236,12 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
         <button class="lang-btn" onclick="setLang('kr')">한국어</button>
       </div>
       <div class="logo">SvS Castle <span>Timer</span></div>
-      <button class="lock-btn" id="lock-btn" onclick="toggleLock()">
-        <span class="sync-dot" id="sync-dot"></span><span id="lock-label">Locked</span>
-      </button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="lock-btn" onclick="toggleVoiceSettings()" style="font-size:16px;padding:6px 10px" title="Voice settings">🔊</button>
+        <button class="lock-btn" id="lock-btn" onclick="toggleLock()">
+          <span class="sync-dot" id="sync-dot"></span><span id="lock-label">Locked</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -295,6 +303,11 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   <div class="connecting" id="connecting">Connecting...</div>
   <div id="audio-hint" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(126,184,255,0.15);border:1px solid rgba(126,184,255,0.3);border-radius:20px;padding:6px 16px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:#7eb8ff;z-index:200;white-space:nowrap">TAP ANYWHERE TO ENABLE SOUND</div>
   <div class="credit credit-mobile">Created by Jilli &middot; State 2691</div>
+  <div id="voice-settings" style="display:none;position:fixed;top:80px;right:20px;z-index:90;background:rgba(10,20,60,0.97);border:1px solid var(--border2);border-radius:12px;padding:16px;width:290px;backdrop-filter:blur(10px)">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Select Voice</div>
+    <select id="voice-select" onchange="onVoiceChange()" style="width:100%;background:rgba(5,15,50,0.85);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:10px"></select>
+    <button onclick="onVoiceChange()" style="width:100%;padding:8px;background:var(--accent);border:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;color:#000;cursor:pointer">▶ Preview Voice</button>
+  </div>
 </div>
 
 <!-- Firebase -->
@@ -321,24 +334,87 @@ const ref = (path) => db.ref('svs/' + path);
 
 // ── Text-to-Speech ──
 let ttsUnlocked=false;
+let selectedVoice=null;
 
 function unlockAudio(){
   ttsUnlocked=true;
   const hint=document.getElementById('audio-hint');
   if(hint)hint.style.display='none';
   requestNotifPermission();
+  loadVoices();
 }
 
-function speak(text){
+function loadVoices(){
   if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
+  const voices=window.speechSynthesis.getVoices();
+  if(voices.length>0)populateVoiceSelect(voices);
+}
+
+function populateVoiceSelect(voices){
+  const sel=document.getElementById('voice-select');
+  if(!sel)return;
+  const targetLang=lang==='kr'?'ko':'en';
+  sel.innerHTML='';
+  voices.forEach((v,i)=>{
+    const opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent=v.name+' ('+v.lang+')';
+    sel.appendChild(opt);
+  });
+  const best=voices.findIndex(v=>v.lang.startsWith(targetLang));
+  const idx=best>=0?best:0;
+  sel.value=idx;
+  selectedVoice=voices[idx];
+}
+
+function onVoiceChange(){
+  const sel=document.getElementById('voice-select');
+  if(!sel)return;
+  const voices=window.speechSynthesis.getVoices();
+  selectedVoice=voices[parseInt(sel.value)]||null;
+  speakRaw(lang==='kr'?'안녕하세요, 테스트입니다':'Hello, this is a test.');
+}
+
+// Global speech queue — nothing ever overlaps
+let _sq=[];let _ss=false;
+
+function speakRaw(text){
+  _sq.push(text);
+  _flushSQ();
+}
+function speak(text){speakRaw(text);}
+
+function _flushSQ(){
+  if(_ss||_sq.length===0)return;
+  _ss=true;
+  const text=_sq.shift();
+  if(!window.speechSynthesis){_ss=false;_flushSQ();return;}
   const u=new SpeechSynthesisUtterance(text);
-  u.lang=lang==='kr'?'ko-KR':'en-US';
+  if(selectedVoice)u.voice=selectedVoice;
+  u.lang=selectedVoice?selectedVoice.lang:(lang==='kr'?'ko-KR':'en-US');
   u.volume=1;u.rate=0.95;u.pitch=1;
+  u.onend=()=>{_ss=false;_flushSQ();};
+  u.onerror=()=>{_ss=false;_flushSQ();};
   window.speechSynthesis.speak(u);
 }
 
+function clearSpeechQueue(){
+  _sq=[];_ss=false;
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
 
+function toggleVoiceSettings(){
+  const panel=document.getElementById('voice-settings');
+  if(!panel)return;
+  const isHidden=panel.style.display==='none'||!panel.style.display;
+  panel.style.display=isHidden?'block':'none';
+  if(isHidden)loadVoices();
+}
+
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=loadVoices;
+  loadVoices();
+}
 
 // Unlock on first touch
 document.addEventListener('touchstart',unlockAudio,{once:true});
@@ -505,9 +581,47 @@ function deleteRally(team,id){
 }
 
 // ── Sequence (admin starts, all clients see) ──
+function playSpeechSequence(team){
+  clearSpeechQueue();
+  const T=TEAMS[team];
+  if(!T.rallies.length)return;
+
+  // Get team name
+  const teamNames={main:lang==='kr'?'메인 랠리':'Main Rally',counter:lang==='kr'?'카운터 랠리':'Counter Rally',enemy:''};
+  const teamLabel=teamNames[team]||'';
+
+  // Sort rallies by delay ascending
+  const sorted=[...T.rallies].sort((a,b)=>a.delay-b.delay);
+  // Get unique delay groups
+  const groups={};
+  sorted.forEach(r=>{
+    if(!groups[r.delay])groups[r.delay]=[];
+    groups[r.delay].push(r.name);
+  });
+  const delayKeys=Object.keys(groups).map(Number).sort((a,b)=>a-b);
+  const maxDelay=delayKeys[delayKeys.length-1];
+
+  // Speak "[Team] Get Ready"
+  if(teamLabel)speakRaw(teamLabel+' '+(lang==='kr'?'준비하세요':'Get Ready'));
+  else speakRaw(lang==='kr'?'준비하세요':'Get Ready');
+
+  // Queue: 5 sec countdown for first group
+  const firstCount=5;
+  for(let c=firstCount;c>=1;c--){speakRaw(String(c));}
+  speakRaw(lang==='kr'?'시작':'Start');
+
+  // For each subsequent group, count down from their offset
+  for(let i=1;i<delayKeys.length;i++){
+    const d=delayKeys[i];
+    // Count down from d to 1 then Start
+    for(let c=d;c>=1;c--){speakRaw(String(c));}
+    speakRaw(lang==='kr'?'시작':'Start');
+  }
+}
+
 function startSequence(team){
   if(!STATE[team].rallies.length)return;
-  // timerStart = now + 7000ms (GET READY 2s + countdown 5s)
+  playSpeechSequence(team);
   const launchAt=Date.now()+7000;
   fbUpdate(team,{started:true,timerStart:launchAt});
 }
@@ -529,6 +643,7 @@ function startEnemyRallyFb(id){
 }
 
 function resetTeam(team){
+  clearSpeechQueue();
   if(team==='enemy'){
     const updated=STATE.enemy.rallies.map(r=>({...r,started:false,timerStart:null}));
     fbUpdate(team,{rallies:updated,started:false,timerStart:null});
@@ -554,15 +669,13 @@ function runOverlay(team,rally){
   const countEl=row.querySelector('.row-ov-count');
   if(!ov)return;
   ov.classList.remove('hidden');
-  // Phase 1: show GET READY centered, hide countdown number
   const infoBlock=row.querySelector('.row-ov-info');
   if(infoBlock)infoBlock.style.display='flex';
   grEl.textContent=L.grText;
   countEl.textContent='';
   countEl.className='row-ov-count';
   countEl.style.display='none';
-  // Speak GET READY only for first starters (delay===0) to avoid overlap
-  if(rally.delay===0)speak(lang==='kr'?'준비하세요':'Get Ready');
+  // Speech handled centrally by playSpeechSequence
 
   setTimeout(()=>{
     // Re-query fresh elements after 2s
@@ -576,7 +689,6 @@ function runOverlay(team,rally){
     countEl2.style.display='';
     let count=5+rally.delay;
     countEl2.textContent=count;pulseCt(countEl2);
-    if(rally.delay===0)speak(String(count));
 
     const cd=setInterval(()=>{
       count--;
@@ -587,12 +699,10 @@ function runOverlay(team,rally){
         ce.textContent=count;
         ce.className='row-ov-count'+(count<=2?' red':'');
         pulseCt(ce);
-        if(rally.delay===0)speak(String(count));
-      }else{
+          }else{
         clearInterval(cd);
         ce.className='row-ov-count start';
         ce.textContent=L.startText;
-        if(rally.delay===0)speak(lang==='kr'?'시작':'Start');
         setTimeout(()=>{const o=getOv(team,rally.id);if(o)o.classList.add('hidden');},800);
       }
     },1000);
