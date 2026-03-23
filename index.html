@@ -199,6 +199,12 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .del-btn:hover{color:var(--accent2)}
 .e-start-btn{padding:6px 12px;background:var(--red);border:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;cursor:pointer;transition:opacity .15s;white-space:nowrap;line-height:1}
 .e-start-btn:hover{opacity:.8}
+.cancel-btn{padding:4px 10px;background:transparent;border:1px solid rgba(239,68,68,0.4);border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1}
+.cancel-btn:hover{background:rgba(239,68,68,0.15)}
+.canceled-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(2,8,24,0.88);border-radius:6px}
+.canceled-overlay.hidden{display:none}
+.canceled-text{font-size:22px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);text-shadow:0 0 16px rgba(239,68,68,0.8)}
+@media(max-width:600px){.canceled-text{font-size:14px;letter-spacing:2px}}
 .empty-team{text-align:center;padding:24px 8px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}
 .auto-note{font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:10px;text-align:center;padding:8px 10px;border-top:1px solid var(--red-border)}
 .auto-note span{color:var(--counter)}
@@ -415,8 +421,10 @@ function setLang(l){
 function fmt(s){s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function calcDelays(rallies){
   if(!rallies.length)return rallies;
-  const mx=Math.max(...rallies.map(r=>r.total));
-  return rallies.map(r=>({...r,delay:mx-r.total}));
+  const active=rallies.filter(r=>!r.canceled);
+  if(!active.length)return rallies;
+  const mx=Math.max(...active.map(r=>r.total));
+  return rallies.map(r=>r.canceled?r:{...r,delay:mx-r.total});
 }
 
 // ── Firebase write helpers (admin only) ──
@@ -452,6 +460,22 @@ function startSequence(team){
   if(!STATE[team].rallies.length)return;
   const launchAt=Date.now()+7000;
   fbUpdate(team,{started:true,timerStart:launchAt});
+}
+
+function cancelRally(team,id){
+  // Set canceled flag in Firebase
+  const T=STATE[team];
+  const updated=T.rallies.map(r=>r.id===id?{...r,canceled:true,started:false,timerStart:null,ticker:null}:r);
+  fbSet(team+'/rallies',updated);
+  // Also stop local ticker if enemy
+  const r=T.rallies.find(r=>r.id===id);
+  if(r&&r.ticker)clearInterval(r.ticker);
+}
+
+function unCancelRally(team,id){
+  const T=STATE[team];
+  const updated=T.rallies.map(r=>r.id===id?{...r,canceled:false}:r);
+  fbSet(team+'/rallies',updated);
 }
 
 function startAllEnemy(){
@@ -567,6 +591,7 @@ function tickTeam(team){
     const row=document.querySelector(`#list-${team} [data-id="${r.id}"]`);if(!row)return;
     const ov=row.querySelector('.row-overlay');
     if(ov&&!ov.classList.contains('hidden'))return;
+    if(r.canceled)return;
     const state=getState(r,elapsed,T.started);
     row.className='rally-row st-'+state;
     const badge=row.querySelector('.r-badge'),time=row.querySelector('.r-time'),pb=row.querySelector('.pb');
@@ -587,7 +612,7 @@ function tickTeam(team){
 
 function tickEnemy(){
   STATE.enemy.rallies.forEach(r=>{
-    if(!r.started||!r.timerStart)return;
+    if(!r.started||!r.timerStart||r.canceled)return;
     const elapsed=(Date.now()-r.timerStart)/1000;
     const row=document.querySelector(`#list-enemy [data-id="${r.id}"]`);if(!row)return;
     const badge=row.querySelector('.r-badge'),time=row.querySelector('.r-time'),pb=row.querySelector('.pb');if(!badge)return;
@@ -624,8 +649,12 @@ function renderTeam(team){
         <div class="r-right">
           <span class="r-badge idle">${L.badgeReady}</span>
           <span class="r-time">${fmt(ENEMY_BASE)}</span>
-          ${isUnlocked&&!r.started?`<button class="e-start-btn" onclick="startEnemyRallyFb(${r.id})">${L.eStartBtn}</button>`:''}
+          ${isUnlocked&&!r.started&&!r.canceled?`<button class="e-start-btn" onclick="startEnemyRallyFb(${r.id})">${L.eStartBtn}</button>`:''}
+          ${isUnlocked?`<button class="cancel-btn" onclick="r.canceled?unCancelRally('enemy',${r.id}):cancelRally('enemy',${r.id})">${r.canceled?'↩':'✕ Cancel'}</button>`:''}
           ${showDel?`<button class="del-btn" onclick="deleteRally('enemy',${r.id})">✕</button>`:''}
+        </div>
+        <div class="canceled-overlay${r.canceled?'':' hidden'}">
+          <span class="canceled-text">RALLY CANCELED</span>
         </div>
       </div>`).join('');
   }else{
@@ -640,7 +669,11 @@ function renderTeam(team){
         <div class="r-right">
           <span class="r-badge idle">${L.badgeReady}</span>
           <span class="r-time">${fmt(BASE)}</span>
+          ${isUnlocked&&!T.started?`<button class="cancel-btn" onclick="r.canceled?unCancelRally('${team}',${r.id}):cancelRally('${team}',${r.id})">${r.canceled?'↩':'✕ Cancel'}</button>`:''}
           ${showDel?`<button class="del-btn" onclick="deleteRally('${team}',${r.id})">✕</button>`:''}
+        </div>
+        <div class="canceled-overlay${r.canceled?'':' hidden'}">
+          <span class="canceled-text">RALLY CANCELED</span>
         </div>
       </div>`).join('');
   }
