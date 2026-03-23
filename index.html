@@ -658,27 +658,35 @@ function deleteRally(team, id) {
 }
 
 function cancelRally(team, id) {
+  // Stop ticker immediately for this team
+  stopLocalTicker(team);
+
+  // Write canceled state with timestamp — listeners on all clients will auto-reset after 4s
   const updated = STATE[team].rallies.map(r => {
     if (r.id !== id) return r;
-    return { ...r, canceled: true, started: false, timerStart: null };
+    return { ...r, canceled: true, canceledAt: Date.now(), started: false, timerStart: null };
   });
   fbSet(team + "/rallies", updated);
+}
 
-  // After 4s: fade out then reset the rally back to idle
+// Called when a Firebase update detects a freshly canceled rally
+// Schedules the auto-reset after 4s on all clients
+function scheduleAutoReset(team, rally) {
+  const age = Date.now() - (rally.canceledAt || 0);
+  const remaining = Math.max(0, 4000 - age);
+
   setTimeout(() => {
-    const row = document.querySelector(`#list-${team} [data-id="${id}"]`);
-    if (row) {
-      const overlay = row.querySelector(".canceled-overlay");
-      if (overlay) overlay.style.opacity = "0";
-    }
-    setTimeout(() => {
-      // Reset rally to idle state (keep it in the list, just clear timer)
-      const reset = STATE[team].rallies.map(r =>
-        r.id === id ? { ...r, canceled: false, started: false, timerStart: null } : r
-      );
-      fbSet(team + "/rallies", reset);
-    }, 300);
-  }, 4000);
+    // Only reset if still canceled (admin might have already cleared it)
+    const current = STATE[team].rallies.find(r => r.id === rally.id);
+    if (!current || !current.canceled) return;
+
+    const reset = STATE[team].rallies.map(r =>
+      r.id === rally.id
+        ? { ...r, canceled: false, canceledAt: null, started: false, timerStart: null }
+        : r
+    );
+    fbSet(team + "/rallies", reset);
+  }, remaining);
 }
 
 function unCancelRally(team, id) {
@@ -908,7 +916,11 @@ function tickTeam(team) {
 // Update the UI for enemy rallies (each runs on its own timer)
 function tickEnemy() {
   STATE.enemy.rallies.forEach(rally => {
-    if (!rally.started || !rally.timerStart || rally.canceled) return;
+    if (!rally.started || !rally.timerStart) return;
+    if (rally.canceled) {
+      // Stop this rally's ticker
+      return;
+    }
 
     const elapsed = (Date.now() - rally.timerStart) / 1000;
     const row     = document.querySelector(`#list-enemy [data-id="${rally.id}"]`);
@@ -1052,9 +1064,20 @@ function listenTeam(team) {
 
     // Update local state
     STATE[team]     = { rallies: newRallies, started: newStarted, timerStart: newTimerStart };
-    prevState[team] = { started: newStarted, timerStart: newTimerStart };
+    prevState[team] = { rallies: prev.rallies || [], started: newStarted, timerStart: newTimerStart };
 
     renderTeam(team);
+
+    // Schedule auto-reset for any newly canceled rallies
+    newRallies.forEach(r => {
+      if (r.canceled && r.canceledAt) {
+        const prevRally = (prev.rallies || []).find(pr => pr.id === r.id);
+        const wasAlreadyCanceled = prevRally && prevRally.canceled;
+        if (!wasAlreadyCanceled) {
+          scheduleAutoReset(team, r);
+        }
+      }
+    });
 
     if (team !== "enemy") {
       if (newStarted && newTimerStart) {
