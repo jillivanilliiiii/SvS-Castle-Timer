@@ -361,7 +361,7 @@ let isReopening = false;
 const BASE_TIME    = 300; // 5:00 minutes in seconds (main/counter rally)
 const ENEMY_BASE   = 295; // 4:55 minutes in seconds (enemy rally)
 const ADMIN_HASH   = "ef2a09456fa517d87905aff62ae8c262cca11656bea97e9e90b8aef87c9cdf30";
-const COUNTDOWN_MS = 7000; // 2s GET READY + 5s countdown before launch
+const COUNTDOWN_MS = 5000; // 2s GET READY + 3s countdown before launch
 
 
 // =========================================================
@@ -966,7 +966,7 @@ function getOv(team, id) {
 
 // Run the animated GET READY → countdown overlay for a single rally.
 // Phase 1 (2s): Shows "[Name] GET READY!!" centered
-// Phase 2 (5+delay s): Countdown numbers, last 2 turn red, then "START!"
+// Phase 2 (3+delay s): Countdown numbers, last 2 turn red, then "START!"
 function runOverlay(team, rally) {
   const row = document.querySelector(`#list-${team} [data-id="${rally.id}"]`);
   if (!row) return;
@@ -1001,7 +1001,7 @@ function runOverlay(team, rally) {
     if (infoEl) infoEl.style.display = "none";
     countEl2.style.display = "";
 
-    let count = 5 + rally.delay;
+    let count = 3 + rally.delay;
     countEl2.textContent = count;
     pulseCt(countEl2);
 
