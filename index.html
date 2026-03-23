@@ -701,7 +701,7 @@ function renderTeam(team){
 // ── Firebase listener — main sync engine ──
 let prevState={main:{},counter:{},enemy:{}};
 
-// Listen for beep signals
+// Listen for beep signals (separate path, won't trigger team re-render)
 ref('beep').on('value', snap=>{
   const data=snap.val();
   if(!data)return;
@@ -709,14 +709,14 @@ ref('beep').on('value', snap=>{
   if(age<3)playCountdownBeep(data.count);
 });
 
-ref('').on('value', snap=>{
-  const data=snap.val()||{};
-  document.getElementById('connecting').style.display='none';
-  document.getElementById('main-ui').style.display='block';
-  document.getElementById('sync-dot').classList.add('online');
+// Listen to each team separately — beep writes won't trigger these
+function listenTeam(team){
+  ref(team).on('value', snap=>{
+    document.getElementById('connecting').style.display='none';
+    document.getElementById('main-ui').style.display='block';
+    document.getElementById('sync-dot').classList.add('online');
 
-  ['main','counter','enemy'].forEach(team=>{
-    const td=data[team]||{};
+    const td=snap.val()||{};
     const newRallies=td.rallies||[];
     const newStarted=!!td.started;
     const newTimerStart=td.timerStart||null;
@@ -735,7 +735,6 @@ ref('').on('value', snap=>{
         const elapsed=getElapsed(newTimerStart);
         if(!wasStarted||hadTimerStart!==newTimerStart){
           if(elapsed<0){
-            // Small delay to ensure DOM is painted before overlay runs
             setTimeout(()=>newRallies.forEach(r=>runOverlay(team,r)),50);
           }
         }
@@ -743,17 +742,17 @@ ref('').on('value', snap=>{
       }else{
         stopLocalTicker(team);
       }
+    }else{
+      const hasActiveEnemy=newRallies.some(r=>r.started);
+      if(hasActiveEnemy){
+        if(!localTickers.enemy)localTickers.enemy=setInterval(tickEnemy,200);
+      }else{
+        if(localTickers.enemy){clearInterval(localTickers.enemy);localTickers.enemy=null;}
+      }
     }
   });
-
-  // Enemy ticker
-  const hasActiveEnemy=STATE.enemy.rallies.some(r=>r.started);
-  if(hasActiveEnemy){
-    if(!localTickers.enemy)localTickers.enemy=setInterval(tickEnemy,200);
-  }else{
-    if(localTickers.enemy){clearInterval(localTickers.enemy);localTickers.enemy=null;}
-  }
-});
+}
+['main','counter','enemy'].forEach(listenTeam);
 
 // Connection status
 db.ref('.info/connected').on('value',snap=>{
