@@ -201,6 +201,16 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .e-start-btn:hover{opacity:.8}
 .cancel-btn{padding:4px 10px;background:transparent;border:1px solid rgba(239,68,68,0.4);border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1}
 .cancel-btn:hover{background:rgba(239,68,68,0.15)}
+.reopen-btn{padding:4px 10px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.5);border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1}
+.reopen-btn:hover{background:rgba(251,191,36,0.25)}
+.reopen-btn:disabled{opacity:.3;cursor:not-allowed}
+.reopen-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(2,8,24,0.95);border-radius:6px}
+.reopen-overlay.hidden{display:none}
+.reopen-text{font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-shadow:0 0 16px rgba(251,191,36,0.8);text-align:center}
+.reopen-count{font-size:52px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--counter);text-shadow:0 0 14px rgba(52,211,153,0.8);text-align:center}
+.reopen-count.red{color:var(--red)!important;text-shadow:0 0 14px rgba(239,68,68,0.8)!important}
+.reopen-count.start{color:var(--green)!important;text-shadow:0 0 14px rgba(52,211,153,0.9)!important;font-size:32px!important}
+.reopen-count.pulse{animation:pulse .35s ease-out}
 .canceled-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(2,8,24,0.88);border-radius:6px;transition:opacity .3s}
 .canceled-overlay.hidden{display:none}
 .canceled-text{font-size:22px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);text-shadow:0 0 16px rgba(239,68,68,0.8)}
@@ -289,6 +299,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
           <div class="team-title" id="t-enemy-title">Enemy Rally</div>
           <div class="team-btns">
             <button class="t-start" id="start-enemy" onclick="startAllEnemy()" disabled style="background:var(--red);color:#fff"></button>
+            <button class="reopen-btn locked-hidden" id="reopen-btn" onclick="reopenRallies()" disabled>↺ Reopen</button>
             <button class="t-reset" id="t-reset-enemy" onclick="resetTeam('enemy')"></button>
           </div>
         </div>
@@ -523,7 +534,7 @@ function lock() {
 
 // Show or hide start/reset buttons based on admin status
 function setControlsVisibility(visible) {
-  document.querySelectorAll(".t-start, .t-reset").forEach(el => {
+  document.querySelectorAll(".t-start, .t-reset, .reopen-btn").forEach(el => {
     el.classList.toggle("locked-hidden", !visible);
   });
 }
@@ -635,6 +646,14 @@ function beepTick() {
 function beepStart() {
   playTone(600, 0.10, 0.30, "sine");
   setTimeout(() => playTone(800, 0.18, 0.35, "sine"), 110);
+}
+
+// Scary alarm beep for CANCEL AND REOPEN
+function beepAlarm() {
+  playTone(880, 0.08, 0.45, "square");
+  setTimeout(() => playTone(660, 0.08, 0.45, "square"), 90);
+  setTimeout(() => playTone(880, 0.08, 0.45, "square"), 180);
+  setTimeout(() => playTone(440, 0.20, 0.40, "square"), 270);
 }
 
 // Unlock audio on first user interaction (required by browsers)
@@ -785,6 +804,98 @@ function startAllEnemy() {
   if (STATE.counter.rallies.length && !STATE.counter.started) {
     startSequence("counter");
   }
+}
+
+// REOPEN: stop all enemy + counter timers, restart enemy immediately,
+// show CANCEL AND REOPEN countdown on counter rows then relaunch counter
+function reopenRallies() {
+  const reopenBtn = document.getElementById("reopen-btn");
+  if (reopenBtn) reopenBtn.disabled = true;
+
+  // 1. Stop enemy ticker
+  if (localTickers.enemy) { clearInterval(localTickers.enemy); localTickers.enemy = null; }
+
+  // 2. Stop counter ticker
+  stopLocalTicker("counter");
+
+  // 3. Restart all enemy rallies immediately
+  const now = Date.now();
+  const enemyReset = STATE.enemy.rallies.map(r => ({
+    ...r, started: true, timerStart: now, canceled: false
+  }));
+  fbSet("enemy/rallies", enemyReset);
+
+  // 4. Reset counter in Firebase (stops all clients)
+  fbUpdate("counter", { started: false, timerStart: null });
+
+  // 5. Show CANCEL AND REOPEN overlay on all counter rally rows
+  const counterRallies = STATE.counter.rallies;
+  if (!counterRallies.length) return;
+
+  // Play alarm beep
+  beepAlarm();
+
+  // Show overlay on each counter row
+  counterRallies.forEach(r => {
+    const ov  = document.getElementById(`reopen-ov-counter-${r.id}`);
+    const txt = document.getElementById(`reopen-txt-counter-${r.id}`);
+    const cnt = document.getElementById(`reopen-cnt-counter-${r.id}`);
+    if (!ov) return;
+    ov.classList.remove("hidden");
+    if (txt) txt.textContent = lang === "kr" ? "취소 및 재시작" : "CANCEL AND REOPEN";
+    if (cnt) { cnt.textContent = ""; cnt.className = "reopen-count"; }
+  });
+
+  // Phase 2 after 2s: run 3...2...1...START countdown
+  setTimeout(() => {
+    counterRallies.forEach(r => {
+      const ov  = document.getElementById(`reopen-ov-counter-${r.id}`);
+      const txt = document.getElementById(`reopen-txt-counter-${r.id}`);
+      const cnt = document.getElementById(`reopen-cnt-counter-${r.id}`);
+      if (!ov || !cnt) return;
+
+      if (txt) txt.style.display = "none";
+      cnt.style.display = "";
+
+      let count = 3;
+      cnt.textContent = count;
+      cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
+      beepTick();
+
+      const iv = setInterval(() => {
+        count--;
+
+        // Re-query in case DOM rebuilt
+        const cnt2 = document.getElementById(`reopen-cnt-counter-${r.id}`);
+        const ov2  = document.getElementById(`reopen-ov-counter-${r.id}`);
+        if (!cnt2) { clearInterval(iv); return; }
+
+        if (count > 0) {
+          cnt2.textContent = count;
+          cnt2.className   = "reopen-count" + (count <= 1 ? " red" : "");
+          cnt2.classList.remove("pulse"); void cnt2.offsetWidth; cnt2.classList.add("pulse");
+          beepTick();
+        } else {
+          clearInterval(iv);
+          cnt2.className   = "reopen-count start";
+          cnt2.textContent = L.startText;
+          beepStart();
+
+          // Hide overlay and relaunch counter sequence
+          setTimeout(() => {
+            if (ov2) ov2.classList.add("hidden");
+            const txt2 = document.getElementById(`reopen-txt-counter-${r.id}`);
+            if (txt2) txt2.style.display = "";
+          }, 800);
+        }
+      }, 1000);
+    });
+
+    // Launch counter sequence (synced via Firebase for all clients)
+    const launchAt = Date.now() + 5000; // 3s countdown + buffer
+    fbUpdate("counter", { started: true, timerStart: launchAt });
+
+  }, 2000);
 }
 
 // Start a single enemy rally
@@ -1057,6 +1168,12 @@ function renderTeam(team) {
 
   const showDelete = isUnlocked && !T.started;
 
+  // Enable reopen button when enemy has active (started) rallies
+  if (team === "enemy") {
+    const reopenBtn = document.getElementById("reopen-btn");
+    if (reopenBtn) reopenBtn.disabled = !T.rallies.some(r => r.started);
+  }
+
   if (team === "enemy") {
     list.innerHTML = T.rallies.map(rally => `
       <div class="rally-row st-idle" data-id="${rally.id}">
@@ -1111,6 +1228,12 @@ function renderTeam(team) {
         </div>
         <div class="canceled-overlay${rally.canceled ? "" : " hidden"}">
           <span class="canceled-text">RALLY CANCELED</span>
+        </div>
+        <div class="reopen-overlay hidden" id="reopen-ov-${team}-${rally.id}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">CANCEL AND REOPEN</div>
+            <div class="reopen-count" id="reopen-cnt-${team}-${rally.id}" style="display:none"></div>
+          </div>
         </div>
       </div>
     `).join("");
