@@ -327,9 +327,10 @@ async function unlockAudio(){
   if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended')await audioCtx.resume();
   audioUnlocked=true;
-  // Hide tap-to-enable hint
   const hint=document.getElementById('audio-hint');
   if(hint)hint.style.display='none';
+  // Also request notification permission on first interaction
+  requestNotifPermission();
 }
 
 async function playBeep(freq=520,duration=0.18,volume=0.25,type='sine'){
@@ -360,6 +361,38 @@ function playCountdownBeep(count){
 // Unlock audio on first touch/click anywhere
 document.addEventListener('touchstart',unlockAudio,{once:true});
 document.addEventListener('click',unlockAudio,{once:true});
+
+// ── Notifications + Vibration ──
+let notifGranted=false;
+
+async function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='granted'){notifGranted=true;return;}
+  const result=await Notification.requestPermission();
+  notifGranted=result==='granted';
+}
+
+function vibrate(pattern){
+  if(navigator.vibrate)navigator.vibrate(pattern);
+}
+
+function sendNotif(title,body){
+  if(!notifGranted)return;
+  try{
+    new Notification(title,{body,icon:'icon.png',silent:true,requireInteraction:false});
+  }catch(e){}
+}
+
+function onCountdownTick(count){
+  if(count>0){
+    // Short single buzz on each tick
+    vibrate(80);
+  }else{
+    // START — strong double buzz
+    vibrate([150,80,150]);
+    sendNotif('START NOW!! 🚀','Rally is starting — GO!');
+  }
+}
 
 // ── PIN ──
 const ADMIN_HASH = 'ef2a09456fa517d87905aff62ae8c262cca11656bea97e9e90b8aef87c9cdf30';
@@ -706,7 +739,10 @@ ref('beep').on('value', snap=>{
   const data=snap.val();
   if(!data)return;
   const age=(Date.now()-data.t)/1000;
-  if(age<3)playCountdownBeep(data.count);
+  if(age<3){
+    playCountdownBeep(data.count);
+    onCountdownTick(data.count);
+  }
 });
 
 // Listen to each team separately — beep writes won't trigger these
@@ -777,6 +813,8 @@ document.getElementById('inp-name').addEventListener('keydown',e=>{if(e.key==='E
 document.getElementById('inp-march').addEventListener('keydown',e=>{if(e.key==='Enter')addRally()});
 setLang('en');
 setControlsVisibility(false);
+// Request notification permission
+requestNotifPermission();
 // Show audio hint on mobile
 if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
   setTimeout(()=>{
