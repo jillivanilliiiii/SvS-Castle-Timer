@@ -785,7 +785,7 @@ function renderTeam(team){
 
   // Enable/disable start button (admin only)
   const startBtn=document.getElementById('start-'+team);
-  if(startBtn)startBtn.disabled=!isUnlocked||!hasRallies||T.started;
+  if(startBtn)startBtn.disabled=!hasRallies||T.started;
 
   if(!hasRallies){list.innerHTML=`<div class="empty-team">${L.empty}</div>`;return;}
   const showDel=isUnlocked&&!T.started;
