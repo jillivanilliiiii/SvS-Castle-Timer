@@ -657,36 +657,34 @@ function deleteRally(team, id) {
   fbSet(team + "/rallies", calcDelays(remaining));
 }
 
+// Track pending cancel resets so we don't double-schedule
+const pendingCancelResets = new Set();
+
 function cancelRally(team, id) {
-  // Stop ticker immediately for this team
+  // Stop ticker immediately
   stopLocalTicker(team);
 
-  // Write canceled state with timestamp — listeners on all clients will auto-reset after 4s
-  const updated = STATE[team].rallies.map(r => {
-    if (r.id !== id) return r;
-    return { ...r, canceled: true, canceledAt: Date.now(), started: false, timerStart: null };
-  });
+  const updated = STATE[team].rallies.map(r =>
+    r.id === id ? { ...r, canceled: true, started: false, timerStart: null } : r
+  );
   fbSet(team + "/rallies", updated);
-}
 
-// Called when a Firebase update detects a freshly canceled rally
-// Schedules the auto-reset after 4s on all clients
-function scheduleAutoReset(team, rally) {
-  const age = Date.now() - (rally.canceledAt || 0);
-  const remaining = Math.max(0, 4000 - age);
+  // Schedule auto-reset after 4s — only this client writes the reset
+  const key = team + "_" + id;
+  if (pendingCancelResets.has(key)) return;
+  pendingCancelResets.add(key);
 
   setTimeout(() => {
-    // Only reset if still canceled (admin might have already cleared it)
-    const current = STATE[team].rallies.find(r => r.id === rally.id);
+    pendingCancelResets.delete(key);
+    // Re-read current state to make sure it's still canceled
+    const current = (STATE[team].rallies || []).find(r => r.id === id);
     if (!current || !current.canceled) return;
 
     const reset = STATE[team].rallies.map(r =>
-      r.id === rally.id
-        ? { ...r, canceled: false, canceledAt: null, started: false, timerStart: null }
-        : r
+      r.id === id ? { ...r, canceled: false, started: false, timerStart: null } : r
     );
     fbSet(team + "/rallies", reset);
-  }, remaining);
+  }, 4000);
 }
 
 function unCancelRally(team, id) {
@@ -1064,20 +1062,9 @@ function listenTeam(team) {
 
     // Update local state
     STATE[team]     = { rallies: newRallies, started: newStarted, timerStart: newTimerStart };
-    prevState[team] = { rallies: prev.rallies || [], started: newStarted, timerStart: newTimerStart };
+    prevState[team] = { started: newStarted, timerStart: newTimerStart };
 
     renderTeam(team);
-
-    // Schedule auto-reset for any newly canceled rallies
-    newRallies.forEach(r => {
-      if (r.canceled && r.canceledAt) {
-        const prevRally = (prev.rallies || []).find(pr => pr.id === r.id);
-        const wasAlreadyCanceled = prevRally && prevRally.canceled;
-        if (!wasAlreadyCanceled) {
-          scheduleAutoReset(team, r);
-        }
-      }
-    });
 
     if (team !== "enemy") {
       if (newStarted && newTimerStart) {
