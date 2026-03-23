@@ -835,7 +835,7 @@ function runOverlay(team, rally) {
 
   if (!ov) return;
 
-  // Phase 1: show GET READY text, hide countdown number
+  // Phase 1: GET READY
   ov.classList.remove("hidden");
   if (infoBlock) infoBlock.style.display = "flex";
   grEl.textContent      = L.grText;
@@ -843,10 +843,10 @@ function runOverlay(team, rally) {
   countEl.className     = "row-ov-count";
   countEl.style.display = "none";
 
-  // Play "get ready" beep only for the first rally (delay === 0) to avoid overlap
-  if (rally.delay === 0) beepGetReady();
+  // 🔊 JETZT: jede Rally piept
+  beepGetReady();
 
-  // Phase 2: after 2 seconds, switch to countdown
+  // Phase 2: Countdown
   setTimeout(() => {
     const ov2      = getOv(team, rally.id);
     if (!ov2) return;
@@ -861,7 +861,9 @@ function runOverlay(team, rally) {
     let count = 5 + rally.delay;
     countEl2.textContent = count;
     pulseCt(countEl2);
-    if (rally.delay === 0) beepTick();
+
+    // 🔊 erster Tick
+    beepTick();
 
     const interval = setInterval(() => {
       count--;
@@ -877,12 +879,18 @@ function runOverlay(team, rally) {
         ce.textContent = count;
         ce.className   = "row-ov-count" + (count <= 2 ? " red" : "");
         pulseCt(ce);
-        if (rally.delay === 0) beepTick();
+
+        // 🔊 jeder Tick piept jetzt
+        beepTick();
+
       } else {
         clearInterval(interval);
         ce.className   = "row-ov-count start";
         ce.textContent = L.startText;
-        if (rally.delay === 0) beepStart();
+
+        // 🔊 START für jede Rally
+        beepStart();
+
         setTimeout(() => {
           const o = getOv(team, rally.id);
           if (o) o.classList.add("hidden");
