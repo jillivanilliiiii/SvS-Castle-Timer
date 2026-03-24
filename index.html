@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,10 +175,10 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .row-ov-count.start{color:var(--green)!important;text-shadow:0 0 12px rgba(52,211,153,0.9)!important;font-size:36px!important}
 .row-ov-count.pulse{animation:pulse .35s ease-out}
 @keyframes pulse{0%{transform:translateX(-50%) scale(1.25)}100%{transform:translateX(-50%) scale(1)}}
-.r-left{flex:1;min-width:0}
+.r-left{flex:1;min-width:0;display:flex;flex-direction:column}
 .r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
-.r-note{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
-.r-note-input{width:100%;background:rgba(5,15,50,0.85);border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--text);outline:none}
+.r-note{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.5px}
+.r-note-input{font-size:13px;background:rgba(5,15,50,0.85);border:1px solid var(--border);border-radius:4px;padding:4px 6px;margin-top:4px;width:100%;font-family:'Rajdhani',sans-serif;color:var(--text);outline:none}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
 .r-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .r-badge{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;white-space:nowrap}
@@ -357,22 +356,14 @@ const COUNTDOWN_MS = 5000;
 let isUnlocked = false;
 let lang = "en";
 let L = null;
-let STATE = {
-  main:    { rallies: [], started: false, timerStart: null },
-  counter: { rallies: [], started: false, timerStart: null },
-  enemy:   { rallies: [], started: false, timerStart: null }
-};
-let prevState = {
-  main:    { started:false, timerStart:null },
-  counter: { started:false, timerStart:null },
-  enemy:   { started:false, timerStart:null }
-};
+let STATE = {main:{rallies:[],started:false,timerStart:null},counter:{rallies:[],started:false,timerStart:null},enemy:{rallies:[],started:false,timerStart:null}};
+let prevState = {main:{started:false,timerStart:null},counter:{started:false,timerStart:null},enemy:{started:false,timerStart:null}};
 let localTickers = {main:null,counter:null,enemy:null};
 
 // =========================================================
-// Language / i18n
+// Language / i18n (verkürzt – unverändert)
 // =========================================================
-const LANGS = {/*...*/}; // (siehe vorherigen Code – unverändert)
+const LANGS = {/*...*/};
 function setLang(newLang){
   lang = newLang; L = LANGS[lang];
   const map={en:"EN",kr:"한국어",tr:"TR",zh:"中文",ru:"РУ",ar:"عر",fr:"FR"};
@@ -395,12 +386,7 @@ function setLang(newLang){
 // PIN / Admin Auth
 // =========================================================
 function toggleLock(){ isUnlocked?lock():openPin(); }
-function openPin(){
-  document.getElementById("pin-input").value="";
-  document.getElementById("pin-err").textContent="";
-  document.getElementById("pin-modal").classList.add("show");
-  setTimeout(()=>document.getElementById("pin-input").focus(),100);
-}
+function openPin(){ document.getElementById("pin-input").value=""; document.getElementById("pin-err").textContent=""; document.getElementById("pin-modal").classList.add("show"); setTimeout(()=>document.getElementById("pin-input").focus(),100); }
 function closePin(){ document.getElementById("pin-modal").classList.remove("show"); }
 async function submitPin(){
   const input=document.getElementById("pin-input").value;
@@ -431,25 +417,22 @@ function lock(){
 function setControlsVisibility(v){
   document.querySelectorAll(".t-start,.t-reset,.reopen-btn").forEach(e=>e.classList.toggle("locked-hidden",!v));
 }
-function updateCounterRestartBtn(){
-  const btn=document.getElementById("restart-counter-btn");
-  if(btn) btn.disabled=!STATE.counter.started||!STATE.counter.rallies.length;
-}
-document.getElementById("pin-input").addEventListener("keydown",e=>{if(e.key==="Enter") submitPin();});
+function updateCounterRestartBtn(){ const btn=document.getElementById("restart-counter-btn"); if(btn) btn.disabled=!STATE.counter.started||!STATE.counter.rallies.length; }
+document.getElementById("pin-input").addEventListener("keydown",e=>{ if(e.key==="Enter") submitPin(); });
 
 // =========================================================
 // Utility Functions
 // =========================================================
 function fmt(s){s=Math.max(0,Math.round(s)); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
-function calcDelays(r){if(!r.length)return r; const act=r.filter(x=>!x.canceled); if(!act.length)return r; const maxT=Math.max(...act.map(x=>x.total)); return r.map(x=>x.canceled?x:{...x,delay:maxT-x.total});}
-function getElapsed(t){if(!t)return null; return (Date.now()-t)/1000;}
-function getRallyState(r,el,started){if(!started||el===null)return"idle"; if(el<0)return"idle"; if(el<r.delay)return"waiting"; const rel=el-r.delay; if(rel<BASE_TIME)return"rally"; if(rel<r.total)return"marching"; return"done";}
+function calcDelays(r){ if(!r.length) return r; const act=r.filter(x=>!x.canceled); if(!act.length) return r; const maxT=Math.max(...act.map(x=>x.total)); return r.map(x=>x.canceled?x:{...x,delay:maxT-x.total}); }
+function getElapsed(t){ if(!t) return null; return (Date.now()-t)/1000; }
+function getRallyState(r,el,started){ if(!started||el===null) return "idle"; if(el<0) return "idle"; if(el<r.delay) return "waiting"; const rel=el-r.delay; if(rel<BASE_TIME) return "rally"; if(rel<r.total) return "marching"; return "done"; }
 
 // =========================================================
 // Audio (Web Audio API)
 // =========================================================
 let audioCtx=null;
-function getAudioCtx(){ if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();} if(audioCtx.state==="suspended")audioCtx.resume(); return audioCtx;}
+function getAudioCtx(){ if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();} if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx;}
 function playTone(f,d,v=0.3,t="sine"){try{const ctx=getAudioCtx(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type=t; o.frequency.setValueAtTime(f,ctx.currentTime); g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(v,ctx.currentTime+0.015); g.gain.linearRampToValueAtTime(0,ctx.currentTime+d); o.start(ctx.currentTime); o.stop(ctx.currentTime+d+0.02);}catch(e){}}
 function beepGetReady(){playTone(440,0.25,0.25);}
 function beepTick(){playTone(520,0.12,0.22);}
@@ -465,7 +448,7 @@ document.addEventListener("touchstart",()=>getAudioCtx(),{once:true});
 function pulseCt(el){el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");}
 
 // =========================================================
-// Rally Management (Admin Actions)
+// Rally Management (Admin)
 // =========================================================
 function addRally(){
   const name=document.getElementById("inp-name").value.trim();
@@ -473,32 +456,28 @@ function addRally(){
   const team=document.getElementById("inp-team").value;
   const err=document.getElementById("err"); err.style.display="none";
 
-  if(!name){err.textContent=L.errName; err.style.display="block"; return;}
+  if(!name){ err.textContent=L.errName; err.style.display="block"; return; }
   const march=parseInt(raw);
-  if(isNaN(march)||march<0){err.textContent=L.errFmt; err.style.display="block"; return;}
+  if(isNaN(march)||march<0){ err.textContent=L.errFmt; err.style.display="block"; return; }
 
   const base=team==="enemy"?ENEMY_BASE:BASE_TIME;
   const total=base+march;
-  const newRally={id:Date.now(),name, march, total, delay:0, started:false, timerStart:null, note:""};
+  const newRally={id:Date.now(),name,march,total,delay:0,started:false,timerStart:null,note:""};
   const upd=calcDelays([...STATE[team].rallies,newRally]);
   fbSet(team+"/rallies",upd);
-  document.getElementById("inp-name").value="";
-  document.getElementById("inp-march").value="";
-  document.getElementById("inp-name").focus();
+  document.getElementById("inp-name").value=""; document.getElementById("inp-march").value=""; document.getElementById("inp-name").focus();
 }
 function deleteRally(team,id){ if(!isUnlocked) return; fbSet(team+"/rallies",calcDelays(STATE[team].rallies.filter(r=>r.id!==id))); }
 function updateRallyNote(team,id,val){
   const upd=STATE[team].rallies.map(r=>r.id===id?{...r,note:val}:r);
   fbSet(team+"/rallies",upd);
 }
-
-// Cancel / uncancel (wie vorher)
 const pendingCancelResets=new Set();
 function cancelRally(team,id){
   stopLocalTicker(team);
   const upd=STATE[team].rallies.map(r=>r.id===id?{...r,canceled:true,started:false,timerStart:null}:r);
   fbSet(team+"/rallies",upd);
-  const key=team+"_"+id; if(pendingCancelResets.has(key))return; pendingCancelResets.add(key);
+  const key=team+"_"+id; if(pendingCancelResets.has(key)) return; pendingCancelResets.add(key);
   setTimeout(()=>{ pendingCancelResets.delete(key); const cur=STATE[team].rallies.find(r=>r.id===id); if(cur&&cur.canceled){ const reset=STATE[team].rallies.map(r=>r.id===id?{...r,canceled:false,started:false,timerStart:null}:r); fbSet(team+"/rallies",reset); } },4000);
 }
 function unCancelRally(team,id){
@@ -547,7 +526,9 @@ function runRestartSequence(counterRallies,enemyUpdate){
       cnt.textContent=c; cnt.className="reopen-count"; cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
       if(r.delay===0) beepTick();
       const iv=setInterval(()=>{
-        c--; const cnt2=document.getElementById("reopen-cnt-counter-"+r.id); const ov2=document.getElementById("reopen-ov-counter-"+r.id);
+        c--;
+        const cnt2=document.getElementById("reopen-cnt-counter-"+r.id);
+        const ov2=document.getElementById("reopen-ov-counter-"+r.id);
         if(!cnt2){clearInterval(iv);return;}
         if(c>0){
           cnt2.textContent=c; cnt2.className="reopen-count"+(c<=2?" red":""); cnt2.classList.remove("pulse"); void cnt2.offsetWidth; cnt2.classList.add("pulse");
@@ -647,7 +628,7 @@ function tickTeam(team){
     const row=document.querySelector(`#list-${team} [data-id="${r.id}"]`);
     if(!row) return;
     const overlay=row.querySelector(".row-overlay");
-    if(overlay&&!overlay.classList.contains("hidden")) return;
+    if(overlay && !overlay.classList.contains("hidden")) return;
     if(r.canceled) return;
     const st=getRallyState(r,el,T.started);
     row.className="rally-row st-"+st;
@@ -686,13 +667,16 @@ function tickEnemy(){
 // Render
 // =========================================================
 function renderTeam(team){
-  const T=STATE[team]; const list=document.getElementById("list-"+team); const startBtn=document.getElementById("start-"+team);
+  const T=STATE[team];
+  const list=document.getElementById("list-"+team);
+  const startBtn=document.getElementById("start-"+team);
   if(startBtn) startBtn.textContent=L.startBtn;
   document.getElementById("t-reset-"+team).textContent=L.resetBtn;
   if(startBtn) startBtn.disabled=!T.rallies.length||T.started;
   if(team==="counter" && isReopening) return;
   if(!T.rallies || !T.rallies.length){
-    list.innerHTML=`<div class="empty-team">${L.empty}</div>`; return;
+    list.innerHTML=`<div class="empty-team">${L.empty}</div>`;
+    return;
   }
   const showDelete=isUnlocked && !T.started;
   if(team==="enemy"){
@@ -714,9 +698,7 @@ function renderTeam(team){
             ? `<button class="cancel-btn" onclick="cancelRally('enemy',${rally.id})">✕ Cancel</button>` : ""}
           ${showDelete ? `<button class="del-btn" onclick="deleteRally('enemy',${rally.id})">✕</button>` : ""}
         </div>
-        <div class="canceled-overlay${rally.canceled?'':' hidden'}">
-          <span class="canceled-text">RALLY CANCELED</span>
-        </div>
+        <div class="canceled-overlay${rally.canceled?'':' hidden'}"><span class="canceled-text">RALLY CANCELED</span></div>
       </div>
     `).join("");
     return;
@@ -749,9 +731,7 @@ function renderTeam(team){
           : ""}
         ${showDelete ? `<button class="del-btn" onclick="deleteRally('${team}',${rally.id})">✕</button>` : ""}
       </div>
-      <div class="canceled-overlay${rally.canceled?'':' hidden'}">
-        <span class="canceled-text">RALLY CANCELED</span>
-      </div>
+      <div class="canceled-overlay${rally.canceled?'':' hidden'}"><span class="canceled-text">RALLY CANCELED</span></div>
       <div class="reopen-overlay hidden" id="reopen-ov-${team}-${rally.id}">
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
           <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">RESTART RESTART RESTART</div>
@@ -790,7 +770,7 @@ function listenTeam(team){
       if(hasActive){
         if(!localTickers.enemy) localTickers.enemy=setInterval(tickEnemy,200);
       }else{
-        if(localTickers.enemy){ clearInterval(localTickers.enemy); localTickers.enemy=null; }
+        if(localTickers.enemy){clearInterval(localTickers.enemy);localTickers.enemy=null;}
       }
     }
   });
