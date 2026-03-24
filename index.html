@@ -216,7 +216,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .canceled-text{font-size:22px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);text-shadow:0 0 16px rgba(239,68,68,0.8)}
 @media(max-width:600px){.canceled-text{font-size:14px;letter-spacing:2px}}
 .empty-team{text-align:center;padding:24px 8px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}
-.auto-note{font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:10px;text-align:center;padding:8px 10px;border-top:1px solid var(--red-border)}
+.auto-note{display:none}
 .auto-note span{color:var(--counter)}
 .connecting{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;letter-spacing:3px;text-transform:uppercase}
 </style>
@@ -244,6 +244,11 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
       <div class="lang-toggle">
         <button class="lang-btn active" onclick="setLang('en')">EN</button>
         <button class="lang-btn" onclick="setLang('kr')">한국어</button>
+        <button class="lang-btn" onclick="setLang('tr')">TR</button>
+        <button class="lang-btn" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" onclick="setLang('ru')">РУ</button>
+        <button class="lang-btn" onclick="setLang('ar')">عر</button>
+        <button class="lang-btn" onclick="setLang('fr')">FR</button>
       </div>
       <div class="logo">SvS Castle <span>Timer</span></div>
       <button class="lock-btn" id="lock-btn" onclick="toggleLock()">
@@ -449,6 +454,136 @@ const LANGS = {
     startText:    "시작!",
     eStartBtn:    "▶",
     autoNote:     "적 시작 시 <span>카운터 랠리</span> 자동 활성화"
+  },
+  tr: {
+    nameLabel:    "Ralli Lideri Adı",
+    marchLabel:   "Yürüyüş (sn)",
+    teamLabel:    "Takım",
+    addBtn:       "+ Ekle",
+    mainTitle:    "Ana Ralli",
+    counterTitle: "Karşı Ralli",
+    enemyTitle:   "Düşman Ralli",
+    optMain:      "Ana Ralli",
+    optCounter:   "Karşı Ralli",
+    optEnemy:     "Düşman Ralli",
+    startBtn:     "▶ Başlat",
+    resetBtn:     "↺ Sıfırla",
+    errName:      "Lütfen bir isim girin.",
+    errFmt:       "Geçerli saniye girin.",
+    empty:        "Ralli yok",
+    badgeReady:   "HAZIR",
+    badgeWait:    "BEKLE",
+    badgeRally:   "RALLİ",
+    badgeMarch:   "YÜRÜYÜŞ",
+    badgeDone:    "TAMAM ✓",
+    grText:       "HAZIR OL!!",
+    startText:    "BAŞLA!",
+    eStartBtn:    "▶",
+    autoNote:     "Düşman başlatınca <span>Karşı Ralli</span> tetiklenir"
+  },
+  zh: {
+    nameLabel:    "拉力领队名称",
+    marchLabel:   "行军时间（秒）",
+    teamLabel:    "队伍",
+    addBtn:       "+ 添加",
+    mainTitle:    "主拉力",
+    counterTitle: "反制拉力",
+    enemyTitle:   "敌方拉力",
+    optMain:      "主拉力",
+    optCounter:   "反制拉力",
+    optEnemy:     "敌方拉力",
+    startBtn:     "▶ 开始",
+    resetBtn:     "↺ 重置",
+    errName:      "请输入名称。",
+    errFmt:       "请输入有效秒数。",
+    empty:        "无拉力",
+    badgeReady:   "就绪",
+    badgeWait:    "等待",
+    badgeRally:   "拉力",
+    badgeMarch:   "行军",
+    badgeDone:    "完成 ✓",
+    grText:       "准备好!!",
+    startText:    "开始!",
+    eStartBtn:    "▶",
+    autoNote:     "敌方启动触发<span>反制拉力</span>"
+  },
+  ru: {
+    nameLabel:    "Имя лидера ралли",
+    marchLabel:   "Марш (сек)",
+    teamLabel:    "Команда",
+    addBtn:       "+ Добавить",
+    mainTitle:    "Главное ралли",
+    counterTitle: "Контр ралли",
+    enemyTitle:   "Ралли врага",
+    optMain:      "Главное ралли",
+    optCounter:   "Контр ралли",
+    optEnemy:     "Ралли врага",
+    startBtn:     "▶ Старт",
+    resetBtn:     "↺ Сброс",
+    errName:      "Введите имя.",
+    errFmt:       "Введите секунды.",
+    empty:        "Нет ралли",
+    badgeReady:   "ГОТОВО",
+    badgeWait:    "ЖДАТЬ",
+    badgeRally:   "РАЛЛИ",
+    badgeMarch:   "МАРШ",
+    badgeDone:    "ГОТОВО ✓",
+    grText:       "ПРИГОТОВЬСЯ!!",
+    startText:    "СТАРТ!",
+    eStartBtn:    "▶",
+    autoNote:     "Старт врага запускает <span>контр ралли</span>"
+  },
+  ar: {
+    nameLabel:    "اسم قائد الرالي",
+    marchLabel:   "وقت الزحف (ثانية)",
+    teamLabel:    "الفريق",
+    addBtn:       "+ إضافة",
+    mainTitle:    "الرالي الرئيسي",
+    counterTitle: "رالي المضاد",
+    enemyTitle:   "رالي العدو",
+    optMain:      "الرالي الرئيسي",
+    optCounter:   "رالي المضاد",
+    optEnemy:     "رالي العدو",
+    startBtn:     "▶ ابدأ",
+    resetBtn:     "↺ إعادة",
+    errName:      "الرجاء إدخال اسم.",
+    errFmt:       "أدخل ثوانٍ صالحة.",
+    empty:        "لا يوجد رالي",
+    badgeReady:   "جاهز",
+    badgeWait:    "انتظار",
+    badgeRally:   "رالي",
+    badgeMarch:   "زحف",
+    badgeDone:    "تم ✓",
+    grText:       "استعد!!",
+    startText:    "ابدأ!",
+    eStartBtn:    "▶",
+    autoNote:     "بدء العدو يُفعّل <span>رالي المضاد</span>"
+  },
+  fr: {
+    nameLabel:    "Nom du leader",
+    marchLabel:   "Marche (sec)",
+    teamLabel:    "Équipe",
+    addBtn:       "+ Ajouter",
+    mainTitle:    "Rallye Principal",
+    counterTitle: "Contre-Rallye",
+    enemyTitle:   "Rallye Ennemi",
+    optMain:      "Rallye Principal",
+    optCounter:   "Contre-Rallye",
+    optEnemy:     "Rallye Ennemi",
+    startBtn:     "▶ Démarrer",
+    resetBtn:     "↺ Réinitialiser",
+    errName:      "Veuillez entrer un nom.",
+    errFmt:       "Entrez des secondes valides.",
+    empty:        "Aucun rallye",
+    badgeReady:   "PRÊT",
+    badgeWait:    "ATTENDRE",
+    badgeRally:   "RALLYE",
+    badgeMarch:   "MARCHE",
+    badgeDone:    "TERMINÉ ✓",
+    grText:       "PRÉPAREZ-VOUS!!",
+    startText:    "DÉPART!",
+    eStartBtn:    "▶",
+    autoNote:     "Le départ ennemi déclenche le <span>Contre-Rallye</span>"
   }
 };
 
@@ -457,8 +592,9 @@ function setLang(newLang) {
   L    = LANGS[lang];
 
   // Update language toggle buttons
+  const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR"};
   document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.textContent === (lang === "en" ? "EN" : "한국어"));
+    btn.classList.toggle("active", btn.textContent === langLabels[lang]);
   });
 
   // Update form labels
@@ -832,7 +968,7 @@ function startAllEnemy() {
 // team: which team to restart ("counter" or "enemy-counter")
 // enemyRallies: if provided, also restart enemy rallies immediately
 function runRestartSequence(counterRallies, enemyRalliesUpdate) {
-  const REOPEN_BASE    = 3;
+  const REOPEN_BASE    = 5;
   const LABEL_PHASE_MS = 1500;
 
   // Show RESTART RESTART RESTART overlay on each counter row
@@ -887,7 +1023,7 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
           clearInterval(iv);
           cnt2.className   = "reopen-count start";
           cnt2.textContent = L.startText;
-          if (r.delay === 0) beepStart();
+          beepStart(); // each rally beeps at its own START moment
 
           // Hide this rally's overlay after 800ms
           setTimeout(() => {
