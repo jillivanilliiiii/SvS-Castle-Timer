@@ -287,6 +287,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
             <div class="team-title" id="t-counter-title">Counter Rally</div>
             <div class="team-btns">
               <button class="t-start" id="start-counter" onclick="startSequence('counter')" disabled></button>
+              <button class="reopen-btn locked-hidden" id="restart-counter-btn" onclick="restartCounterRally()" disabled>↺ Restart</button>
               <button class="t-reset" id="t-reset-counter" onclick="resetTeam('counter')"></button>
             </div>
           </div>
@@ -299,7 +300,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
           <div class="team-title" id="t-enemy-title">Enemy Rally</div>
           <div class="team-btns">
             <button class="t-start" id="start-enemy" onclick="startAllEnemy()" disabled style="background:var(--red);color:#fff"></button>
-            <button class="reopen-btn locked-hidden" id="reopen-btn" onclick="reopenRallies()" disabled>↺ Reopen</button>
+            <button class="reopen-btn locked-hidden" id="reopen-btn" onclick="reopenRallies()" disabled>↺ Restart</button>
             <button class="t-reset" id="t-reset-enemy" onclick="resetTeam('enemy')"></button>
           </div>
         </div>
@@ -540,6 +541,13 @@ function setControlsVisibility(visible) {
   document.querySelectorAll(".t-start, .t-reset, .reopen-btn").forEach(el => {
     el.classList.toggle("locked-hidden", !visible);
   });
+}
+
+// Enable/disable counter restart button based on whether counter is running
+function updateCounterRestartBtn() {
+  const btn = document.getElementById("restart-counter-btn");
+  if (!btn) return;
+  btn.disabled = !STATE.counter.started || !STATE.counter.rallies.length;
 }
 
 // Allow Enter key to submit PIN
@@ -818,43 +826,14 @@ function startAllEnemy() {
   }
 }
 
-// REOPEN: stop all enemy + counter timers, restart enemy immediately,
-// show RESTART RESTART RESTART countdown on counter rows then relaunch counter
-function reopenRallies() {
-  const reopenBtn = document.getElementById("reopen-btn");
-  if (reopenBtn) reopenBtn.disabled = true;
+// Shared restart countdown logic used by both Restart buttons
+// team: which team to restart ("counter" or "enemy-counter")
+// enemyRallies: if provided, also restart enemy rallies immediately
+function runRestartSequence(counterRallies, enemyRalliesUpdate) {
+  const REOPEN_BASE    = 3;
+  const LABEL_PHASE_MS = 1500;
 
-  // ── Step 1: Hard-stop ALL running timers + audio ──────────────────
-  isReopening = true; // block normal GET READY overlay for counter
-  stopAllAudio(); // kill any ongoing beeps immediately
-  stopLocalTicker("main");
-  stopLocalTicker("counter");
-  if (localTickers.enemy) { clearInterval(localTickers.enemy); localTickers.enemy = null; }
-
-  // Cancel any ongoing GET READY overlays by hiding them
-  document.querySelectorAll(".row-overlay").forEach(ov => ov.classList.add("hidden"));
-  document.querySelectorAll(".reopen-overlay").forEach(ov => ov.classList.add("hidden"));
-
-  // Reset counter + enemy in Firebase simultaneously
-  const now = Date.now();
-
-  const enemyRestarted = STATE.enemy.rallies.map(r => ({
-    ...r, started: true, timerStart: now, canceled: false
-  }));
-
-  // Write both atomically
-  db.ref("svs").update({
-    "enemy/rallies":    enemyRestarted,
-    "counter/started":  false,
-    "counter/timerStart": null
-  });
-
-  // ── Step 2: Play 2 long alarm beeps ──────────────────────────────
-  beepAlarm();
-
-  // ── Step 3: Show RESTART RESTART RESTART on counter rows ───────────────
-  const counterRallies = STATE.counter.rallies;
-
+  // Show RESTART RESTART RESTART overlay on each counter row
   counterRallies.forEach(r => {
     const ov  = document.getElementById("reopen-ov-counter-" + r.id);
     const txt = document.getElementById("reopen-txt-counter-" + r.id);
@@ -865,33 +844,12 @@ function reopenRallies() {
     if (cnt) { cnt.textContent = ""; cnt.style.display = "none"; }
   });
 
-  if (!counterRallies.length) return;
-
-  // ── Step 4: After 1.5s start per-rally countdowns (like GET READY) ──
-  // Base = 3s (max). Rallies with delay get 3+delay seconds countdown.
-  // timerStart is set so elapsed=0 exactly when the first rally's countdown hits 0.
-  // That means timerStart = now + 1500 (label phase) + 3000 (base countdown) = now + 4500ms
-
-  const REOPEN_BASE    = 3;          // base countdown seconds (max)
-  const LABEL_PHASE_MS = 1500;       // how long "RESTART RESTART RESTART" is shown
-
+  // After label phase, run per-rally countdown
   setTimeout(() => {
-    // Set Firebase timerStart so all clients sync correctly.
-    // elapsed will be 0 exactly when the first rally (delay=0) launches.
-    // Use a special marker so the listener knows NOT to trigger runOverlay
-    const launchAt = Date.now() + (REOPEN_BASE * 1000);
-    fbUpdate("counter", { started: true, timerStart: launchAt });
-
-    // Clear reopen flag after overlays are done (3s countdown + 800ms START display)
-    setTimeout(() => { isReopening = false; }, (REOPEN_BASE * 1000) + 900);
-
-    // Run a per-rally overlay countdown — mirrors runOverlay() logic
     counterRallies.forEach(r => {
       const txt = document.getElementById("reopen-txt-counter-" + r.id);
       const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
       if (!cnt) return;
-
-      // Hide label, show countdown
       if (txt) txt.style.display = "none";
       cnt.style.display = "";
 
@@ -918,8 +876,14 @@ function reopenRallies() {
           cnt2.textContent = L.startText;
           if (r.delay === 0) beepStart();
 
-          // Hide overlay
+          // At START: write to Firebase (after DOM countdown is done, no rebuild conflict)
+          const launchAt = Date.now();
+          const updates = { "counter/started": true, "counter/timerStart": launchAt };
+          if (enemyRalliesUpdate) updates["enemy/rallies"] = enemyRalliesUpdate;
+          db.ref("svs").update(updates);
+
           setTimeout(() => {
+            isReopening = false;
             if (ov2) ov2.classList.add("hidden");
             const txt2 = document.getElementById("reopen-txt-counter-" + r.id);
             if (txt2) txt2.style.display = "";
@@ -927,8 +891,64 @@ function reopenRallies() {
         }
       }, 1000);
     });
-
   }, LABEL_PHASE_MS);
+}
+
+// ENEMY Restart: stops enemy + counter, restarts both
+function reopenRallies() {
+  const reopenBtn = document.getElementById("reopen-btn");
+  if (reopenBtn) reopenBtn.disabled = true;
+
+  isReopening = true;
+  stopAllAudio();
+  // Stop counter and enemy tickers — do NOT stop main
+  stopLocalTicker("counter");
+  if (localTickers.enemy) { clearInterval(localTickers.enemy); localTickers.enemy = null; }
+
+  // Hide any GET READY overlays on counter rows
+  document.querySelectorAll("#list-counter .row-overlay").forEach(ov => ov.classList.add("hidden"));
+  document.querySelectorAll("#list-counter .reopen-overlay").forEach(ov => ov.classList.add("hidden"));
+
+  // Stop counter in Firebase immediately
+  fbUpdate("counter", { started: false, timerStart: null });
+
+  // Prepare enemy restart (will be written at START moment)
+  const now = Date.now();
+  const enemyRestarted = STATE.enemy.rallies.map(r => ({
+    ...r, started: true, timerStart: now, canceled: false
+  }));
+
+  const counterRallies = STATE.counter.rallies;
+  if (!counterRallies.length) {
+    // No counter rallies — just restart enemy immediately
+    fbSet("enemy/rallies", enemyRestarted);
+    isReopening = false;
+    return;
+  }
+
+  beepAlarm();
+  runRestartSequence(counterRallies, enemyRestarted);
+}
+
+// COUNTER Restart: stops only counter and restarts it
+function restartCounterRally() {
+  const btn = document.getElementById("restart-counter-btn");
+  if (btn) btn.disabled = true;
+
+  isReopening = true;
+  stopAllAudio();
+  stopLocalTicker("counter");
+
+  document.querySelectorAll("#list-counter .row-overlay").forEach(ov => ov.classList.add("hidden"));
+  document.querySelectorAll("#list-counter .reopen-overlay").forEach(ov => ov.classList.add("hidden"));
+
+  fbUpdate("counter", { started: false, timerStart: null });
+
+  const counterRallies = STATE.counter.rallies;
+  if (!counterRallies.length) { isReopening = false; return; }
+
+  beepAlarm();
+  runRestartSequence(counterRallies, null); // no enemy update
 }
 
 // Start a single enemy rally
@@ -1201,10 +1221,12 @@ function renderTeam(team) {
 
   const showDelete = isUnlocked && !T.started;
 
-  // Enable reopen button when enemy has active (started) rallies
   if (team === "enemy") {
     const reopenBtn = document.getElementById("reopen-btn");
     if (reopenBtn) reopenBtn.disabled = !T.rallies.some(r => r.started);
+  }
+  if (team === "counter") {
+    updateCounterRestartBtn();
   }
 
   if (team === "enemy") {
