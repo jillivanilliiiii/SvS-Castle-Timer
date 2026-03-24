@@ -358,6 +358,8 @@ function fbUpdate(path, value) {
 
 // Flag to block the normal GET READY overlay during a reopen sequence
 let isReopening = false;
+// Track max delay across counter rallies so we know when ALL countdowns finish
+let reopenMaxDelay = 0;
 
 const BASE_TIME    = 300; // 5:00 minutes in seconds (main/counter rally)
 const ENEMY_BASE   = 295; // 4:55 minutes in seconds (enemy rally)
@@ -846,6 +848,17 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
 
   // After label phase, run per-rally countdown
   setTimeout(() => {
+
+    // Write Firebase NOW with launchAt = REOPEN_BASE seconds from now
+    // isReopening blocks renderTeam so DOM stays intact during countdown
+    const launchAt = Date.now() + (REOPEN_BASE * 1000);
+    const updates = { "counter/started": true, "counter/timerStart": launchAt };
+    if (enemyRalliesUpdate) updates["enemy/rallies"] = enemyRalliesUpdate;
+    db.ref("svs").update(updates);
+
+    // Figure out which rally finishes last
+    const maxDelay = Math.max(...counterRallies.map(r => r.delay || 0));
+
     counterRallies.forEach(r => {
       const txt = document.getElementById("reopen-txt-counter-" + r.id);
       const cnt = document.getElementById("reopen-cnt-counter-" + r.id);
@@ -876,17 +889,18 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
           cnt2.textContent = L.startText;
           if (r.delay === 0) beepStart();
 
-          // At START: write to Firebase (after DOM countdown is done, no rebuild conflict)
-          const launchAt = Date.now();
-          const updates = { "counter/started": true, "counter/timerStart": launchAt };
-          if (enemyRalliesUpdate) updates["enemy/rallies"] = enemyRalliesUpdate;
-          db.ref("svs").update(updates);
-
+          // Hide this rally's overlay after 800ms
           setTimeout(() => {
-            isReopening = false;
             if (ov2) ov2.classList.add("hidden");
             const txt2 = document.getElementById("reopen-txt-counter-" + r.id);
             if (txt2) txt2.style.display = "";
+
+            // Only release isReopening after the LAST rally finishes
+            if (r.delay === maxDelay) {
+              isReopening = false;
+              // Now safe to re-render counter
+              renderTeam("counter");
+            }
           }, 800);
         }
       }, 1000);
@@ -1213,6 +1227,9 @@ function renderTeam(team) {
 
   // Enable/disable start button
   if (startBtn) startBtn.disabled = !T.rallies.length || T.started;
+
+  // Don't rebuild counter DOM while reopen overlay is running — would destroy countdown elements
+  if (team === "counter" && isReopening) return;
 
   if (!T.rallies || !T.rallies.length) {
     list.innerHTML = `<div class="empty-team">${L.empty}</div>`;
