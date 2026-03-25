@@ -13,6 +13,7 @@
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/rajdhani@5/400.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/rajdhani@5/700.css" rel="stylesheet">
 <style>
+
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#020818;--surface:rgba(10,20,60,0.75);--surface2:rgba(15,30,80,0.6);
@@ -24,12 +25,11 @@
   --main:#7eb8ff;--main-border:rgba(126,184,255,0.3);
   --counter:#34d399;--counter-border:rgba(52,211,153,0.3);
 }
+
 html,body{height:100%;background:var(--bg)}
 body{font-family:'Rajdhani',sans-serif;color:var(--text);min-height:100vh;position:relative;overflow-x:hidden}
 canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:44px 36px 90px}
-
-
 .header{text-align:center;margin-bottom:24px;position:relative;padding-bottom:14px}
 .header::after{content:'';display:block;position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--blue),var(--accent),transparent)}
 .logo{font-size:46px;font-weight:700;letter-spacing:6px;text-transform:uppercase;color:#fff;text-shadow:0 0 24px rgba(126,184,255,0.5)}
@@ -56,7 +56,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .sync-dot.online{background:var(--green)}
 .sync-dot.offline{background:var(--accent2)}
 
-
 .pin-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(2,8,24,0.92);backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .pin-modal.show{display:flex}
 .pin-box{background:rgba(10,20,60,0.95);border:1px solid var(--border2);border-radius:14px;padding:28px 24px;text-align:center;width:280px}
@@ -68,7 +67,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .pin-ok{flex:1;padding:10px;background:var(--accent);border:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:#000;cursor:pointer}
 .pin-cancel{flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);cursor:pointer}
 .pin-err{color:var(--accent2);font-size:11px;letter-spacing:1px;margin-top:6px;min-height:16px}
-
 
 .form-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:26px;backdrop-filter:blur(8px)}
 .form-box.locked{display:none}
@@ -119,9 +117,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   .left-col{gap:3px}
   .page{padding:8px 6px 60px}
   .rally-row .pb{height:1px}
-
-
-  
   .header{position:fixed;bottom:0;left:0;right:0;z-index:50;margin:0;padding:10px 14px;background:rgba(2,8,24,0.95);backdrop-filter:blur(10px);border-top:1px solid rgba(80,120,255,0.2)}
   .header::after{display:none}
   .header-row{margin-bottom:0}
@@ -162,7 +157,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .rally-row.st-done{opacity:.4}
 .row-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:0 14px;background:rgba(2,8,24,0.93);border-radius:10px;transition:opacity .2s}
 .row-overlay.hidden{opacity:0;pointer-events:none}
-
 .row-ov-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;width:100%}
 .row-ov-name{font-size:22px;font-weight:700;color:#fff;letter-spacing:2px;line-height:1.1;text-transform:uppercase}
 .team-panel.main .row-ov-name{color:#fff;text-shadow:0 0 16px rgba(126,184,255,0.9)}
@@ -170,7 +164,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .row-ov-gr{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
 .team-panel.main .row-ov-gr{color:var(--main);text-shadow:0 0 10px rgba(126,184,255,0.7)}
 .team-panel.counter .row-ov-gr{color:var(--counter);text-shadow:0 0 10px rgba(52,211,153,0.7)}
-
 .row-ov-count{position:absolute;left:50%;transform:translateX(-50%);font-size:54px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;text-align:center}
 .team-panel.main .row-ov-count{color:var(--main);text-shadow:0 0 12px rgba(126,184,255,0.8)}
 .team-panel.counter .row-ov-count{color:var(--counter);text-shadow:0 0 12px rgba(52,211,153,0.8)}
@@ -243,7 +236,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 <body>
 <canvas id="stars"></canvas>
 
-<!-- PIN Modal -->
 <div class="pin-modal" id="pin-modal">
   <div class="pin-box">
     <div class="pin-title">Admin PIN</div>
@@ -337,14 +329,9 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   <div class="credit credit-mobile">Created by Jilli &middot; State 2691</div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-
-
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFsBvmgj7-VQYcFVj6snk7l5ramb1mAUk",
@@ -375,30 +362,16 @@ function fbUpdate(path, value) {
   ref(path).update(value);
 }
 
-
-
-
-
-
-
 let isReopening = false;
-
 let reopenMaxDelay = 0;
-
 const BASE_TIME    = 300; 
 const ENEMY_BASE   = 295; 
 const ADMIN_HASH   = "ef2a09456fa517d87905aff62ae8c262cca11656bea97e9e90b8aef87c9cdf30";
 const COUNTDOWN_MS = 5000; 
 
-
-
-
-
-
 let isUnlocked = false;
 let lang = "en";
 let L = null; 
-
 
 let STATE = {
   main:    { rallies: [], started: false, timerStart: null },
@@ -413,13 +386,7 @@ let prevState = {
   enemy:   { started: false, timerStart: null }
 };
 
-
 let localTickers = { main: null, counter: null, enemy: null };
-
-
-
-
-
 
 const LANGS = {
   en: {
@@ -607,31 +574,27 @@ const LANGS = {
 };
 
 function setLang(newLang) {
-  lang = newLang;
-  L    = LANGS[lang];
+    lang = newLang;
+    L    = LANGS[lang];
 
   
-  const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR"};
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.textContent === langLabels[lang]);
-  });
+    const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR"};
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+   btn.classList.toggle("active", btn.textContent === langLabels[lang]);
+    });
 
-  
-  document.getElementById("t-name-label").textContent  = L.nameLabel;
-  document.getElementById("t-march-label").textContent = L.marchLabel;
-  document.getElementById("t-team-label").textContent  = L.teamLabel;
-  document.getElementById("t-add-btn").textContent     = L.addBtn;
-  document.getElementById("opt-main").textContent      = L.optMain;
-  document.getElementById("opt-counter").textContent   = L.optCounter;
-  document.getElementById("opt-enemy").textContent     = L.optEnemy;
+    document.getElementById("t-name-label").textContent  = L.nameLabel;
+    document.getElementById("t-march-label").textContent = L.marchLabel;
+    document.getElementById("t-team-label").textContent  = L.teamLabel;
+    document.getElementById("t-add-btn").textContent     = L.addBtn;
+    document.getElementById("opt-main").textContent      = L.optMain;
+    document.getElementById("opt-counter").textContent   = L.optCounter;
+    document.getElementById("opt-enemy").textContent     = L.optEnemy;
+    document.getElementById("t-main-title").textContent    = L.mainTitle;
+    document.getElementById("t-counter-title").textContent = L.counterTitle;
+    document.getElementById("t-enemy-title").textContent   = L.enemyTitle;
+    document.getElementById("auto-note").innerHTML         = L.autoNote;
 
-  
-  document.getElementById("t-main-title").textContent    = L.mainTitle;
-  document.getElementById("t-counter-title").textContent = L.counterTitle;
-  document.getElementById("t-enemy-title").textContent   = L.enemyTitle;
-  document.getElementById("auto-note").innerHTML         = L.autoNote;
-
-  
   ["main", "counter", "enemy"].forEach(team => {
     const startBtn = document.getElementById("start-" + team);
     if (startBtn) startBtn.textContent = L.startBtn;
@@ -639,11 +602,6 @@ function setLang(newLang) {
     renderTeam(team);
   });
 }
-
-
-
-
-
 
 function toggleLock() {
   isUnlocked ? lock() : openPin();
@@ -693,13 +651,11 @@ function lock() {
   ["main", "counter", "enemy"].forEach(renderTeam);
 }
 
-
 function setControlsVisibility(visible) {
   document.querySelectorAll(".t-start, .t-reset, .reopen-btn").forEach(el => {
     el.classList.toggle("locked-hidden", !visible);
   });
 }
-
 
 function updateCounterRestartBtn() {
   const btn = document.getElementById("restart-counter-btn");
@@ -707,16 +663,9 @@ function updateCounterRestartBtn() {
   btn.disabled = !STATE.counter.started || !STATE.counter.rallies.length;
 }
 
-
 document.getElementById("pin-input").addEventListener("keydown", e => {
   if (e.key === "Enter") submitPin();
 });
-
-
-
-
-
-
 
 function fmt(totalSeconds) {
   const s = Math.max(0, Math.round(totalSeconds));
@@ -724,9 +673,6 @@ function fmt(totalSeconds) {
   const secs = (s % 60).toString().padStart(2, "0");
   return mins + ":" + secs;
 }
-
-
-
 
 function calcDelays(rallies) {
   if (!rallies.length) return rallies;
@@ -743,12 +689,10 @@ function calcDelays(rallies) {
   });
 }
 
-
 function getElapsed(timerStart) {
   if (!timerStart) return null;
   return (Date.now() - timerStart) / 1000;
 }
-
 
 function getRallyState(rally, elapsed, teamStarted) {
   if (!teamStarted || elapsed === null) return "idle";
@@ -761,10 +705,6 @@ function getRallyState(rally, elapsed, teamStarted) {
   return "done";
 }
 
-
-
-
-
 let audioCtx = null;
 
 function getAudioCtx() {
@@ -775,8 +715,6 @@ function getAudioCtx() {
   if (audioCtx.state === "suspended") audioCtx.resume();
   return audioCtx;
 }
-
-
 
 function playTone(freq, duration, volume = 0.3, type = "sine") {
   try {
@@ -837,22 +775,11 @@ function stopAllAudio() {
 document.addEventListener("click",      () => getAudioCtx(), { once: true });
 document.addEventListener("touchstart", () => getAudioCtx(), { once: true });
 
-
-
-
-
-
-
 function pulseCt(el) {
   el.classList.remove("pulse");
   void el.offsetWidth; 
   el.classList.add("pulse");
 }
-
-
-
-
-
 
 function toggleMainPanel() {
   const panel = document.querySelector(".team-panel.main");
@@ -862,11 +789,6 @@ function toggleMainPanel() {
   panel.classList.toggle("hidden-panel", !isHidden);
   btn.textContent = isHidden ? "Hide" : "Show";
 }
-
-
-
-
-
 
 function addRally() {
   const name    = document.getElementById("inp-name").value.trim();
@@ -905,8 +827,6 @@ function addRally() {
 
   const updated = calcDelays([...STATE[team].rallies, newRally]);
   fbSet(team + "/rallies", updated);
-
-  
   document.getElementById("inp-name").value  = "";
   document.getElementById("inp-march").value = "";
   document.getElementById("inp-name").focus();
@@ -928,7 +848,6 @@ function updateNote(team, id, value) {
 
 
 const pendingCancelResets = new Set();
-
 function cancelRally(team, id) {
   
   stopLocalTicker(team);
@@ -964,14 +883,6 @@ function unCancelRally(team, id) {
   fbSet(team + "/rallies", updated);
 }
 
-
-
-
-
-
-
-
-
 function startSequence(team) {
   if (!STATE[team].rallies.length) return;
   const launchAt = Date.now() + COUNTDOWN_MS;
@@ -992,9 +903,6 @@ function startAllEnemy() {
   }
 }
 
-
-
-
 function runRestartSequence(counterRallies, enemyRalliesUpdate) {
   const REOPEN_BASE    = 5;
   const LABEL_PHASE_MS = 1500;
@@ -1012,9 +920,6 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
 
   
   setTimeout(() => {
-
-    
-    
     const launchAt = Date.now() + (REOPEN_BASE * 1000);
     const updates = { "counter/started": true, "counter/timerStart": launchAt };
     if (enemyRalliesUpdate) updates["enemy/rallies"] = enemyRalliesUpdate;
@@ -1072,7 +977,6 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
   }, LABEL_PHASE_MS);
 }
 
-
 function reopenRallies() {
   const reopenBtn = document.getElementById("reopen-btn");
   if (reopenBtn) reopenBtn.disabled = true;
@@ -1108,7 +1012,6 @@ function reopenRallies() {
   runRestartSequence(counterRallies, enemyRestarted);
 }
 
-
 function restartCounterRally() {
   const btn = document.getElementById("restart-counter-btn");
   if (btn) btn.disabled = true;
@@ -1128,7 +1031,6 @@ function restartCounterRally() {
   beepAlarm();
   runRestartSequence(counterRallies, null); 
 }
-
 
 function startEnemyRallyFb(id) {
   const now     = Date.now();
@@ -1152,19 +1054,10 @@ function resetTeam(team) {
   }
 }
 
-
-
-
-
-
-
 function getOv(team, id) {
   const row = document.querySelector(`#list-${team} [data-id="${id}"]`);
   return row ? row.querySelector(".row-overlay") : null;
 }
-
-
-
 
 function runOverlay(team, rally) {
   const row = document.querySelector(`#list-${team} [data-id="${rally.id}"]`);
@@ -1176,19 +1069,13 @@ function runOverlay(team, rally) {
   const infoBlock = row.querySelector(".row-ov-info");
 
   if (!ov) return;
-
-  
   ov.classList.remove("hidden");
   if (infoBlock) infoBlock.style.display = "flex";
   grEl.textContent      = L.grText;
   countEl.textContent   = "";
   countEl.className     = "row-ov-count";
   countEl.style.display = "none";
-
-  
   beepGetReady();
-
-  
   setTimeout(() => {
     const ov2      = getOv(team, rally.id);
     if (!ov2) return;
@@ -1203,8 +1090,6 @@ function runOverlay(team, rally) {
     let count = 3 + rally.delay;
     countEl2.textContent = count;
     pulseCt(countEl2);
-
-    
     beepTick();
 
     const interval = setInterval(() => {
@@ -1216,23 +1101,16 @@ function runOverlay(team, rally) {
         clearInterval(interval);
         return;
       }
-
       if (count > 0) {
         ce.textContent = count;
         ce.className   = "row-ov-count" + (count <= 2 ? " red" : "");
         pulseCt(ce);
-
-        
         beepTick();
-
       } else {
         clearInterval(interval);
         ce.className   = "row-ov-count start";
         ce.textContent = L.startText;
-
-        
         beepStart();
-
         setTimeout(() => {
           const o = getOv(team, rally.id);
           if (o) o.classList.add("hidden");
@@ -1242,11 +1120,6 @@ function runOverlay(team, rally) {
 
   }, 2000);
 }
-
-
-
-
-
 
 function startLocalTicker(team) {
   if (localTickers[team]) clearInterval(localTickers[team]);
@@ -1259,7 +1132,6 @@ function stopLocalTicker(team) {
     localTickers[team] = null;
   }
 }
-
 
 function tickTeam(team) {
   const T = STATE[team];
@@ -1375,11 +1247,6 @@ function tickEnemy() {
   });
 }
 
-
-
-
-
-
 function renderTeam(team) {
   const T       = STATE[team];
   const list    = document.getElementById("list-" + team);
@@ -1482,11 +1349,6 @@ function renderTeam(team) {
   }
 }
 
-
-
-
-
-
 function listenTeam(team) {
   ref(team).on("value", snap => {
     
@@ -1556,11 +1418,6 @@ db.ref(".info/connected").on("value", snap => {
   }
 });
 
-
-
-
-
-
 (function initStars() {
   const canvas = document.getElementById("stars");
 
@@ -1626,12 +1483,6 @@ db.ref(".info/connected").on("value", snap => {
 
   drawFrame();
 })();
-
-
-
-
-
-
 document.getElementById("inp-name").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("inp-march").focus();
 });
@@ -1639,11 +1490,6 @@ document.getElementById("inp-name").addEventListener("keydown", e => {
 document.getElementById("inp-march").addEventListener("keydown", e => {
   if (e.key === "Enter") addRally();
 });
-
-
-
-
-
 
 setLang("en");
 setControlsVisibility(false);
