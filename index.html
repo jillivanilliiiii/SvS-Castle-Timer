@@ -29,7 +29,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--text);min-height:100vh;positi
 canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:44px 36px 90px}
 
-/* Header */
+
 .header{text-align:center;margin-bottom:24px;position:relative;padding-bottom:14px}
 .header::after{content:'';display:block;position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--blue),var(--accent),transparent)}
 .logo{font-size:46px;font-weight:700;letter-spacing:6px;text-transform:uppercase;color:#fff;text-shadow:0 0 24px rgba(126,184,255,0.5)}
@@ -51,12 +51,12 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   .credit-desktop{display:none}
   .credit-mobile{display:block;text-align:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:8px 0 4px;opacity:.5}
 }
-/* Status dot */
+
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-right:5px;vertical-align:middle}
 .sync-dot.online{background:var(--green)}
 .sync-dot.offline{background:var(--accent2)}
 
-/* PIN modal */
+
 .pin-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(2,8,24,0.92);backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .pin-modal.show{display:flex}
 .pin-box{background:rgba(10,20,60,0.95);border:1px solid var(--border2);border-radius:14px;padding:28px 24px;text-align:center;width:280px}
@@ -69,7 +69,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .pin-cancel{flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);cursor:pointer}
 .pin-err{color:var(--accent2);font-size:11px;letter-spacing:1px;margin-top:6px;min-height:16px}
 
-/* Form */
+
 .form-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:26px;backdrop-filter:blur(8px)}
 .form-box.locked{display:none}
 .form-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
@@ -84,7 +84,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .add-btn:hover{opacity:.85}
 .err{color:var(--accent2);font-size:11px;margin-top:6px;letter-spacing:1px}
 
-/* Teams */
+
 .teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .left-col{display:flex;flex-direction:column;gap:20px}
 @media(max-width:600px){
@@ -121,7 +121,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   .rally-row .pb{height:1px}
 
 
-  /* Move header to bottom */
+  
   .header{position:fixed;bottom:0;left:0;right:0;z-index:50;margin:0;padding:10px 14px;background:rgba(2,8,24,0.95);backdrop-filter:blur(10px);border-top:1px solid rgba(80,120,255,0.2)}
   .header::after{display:none}
   .header-row{margin-bottom:0}
@@ -162,7 +162,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .rally-row.st-done{opacity:.4}
 .row-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:0 14px;background:rgba(2,8,24,0.93);border-radius:10px;transition:opacity .2s}
 .row-overlay.hidden{opacity:0;pointer-events:none}
-/* GET READY phase — centered block */
+
 .row-ov-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;width:100%}
 .row-ov-name{font-size:22px;font-weight:700;color:#fff;letter-spacing:2px;line-height:1.1;text-transform:uppercase}
 .team-panel.main .row-ov-name{color:#fff;text-shadow:0 0 16px rgba(126,184,255,0.9)}
@@ -170,7 +170,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .row-ov-gr{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
 .team-panel.main .row-ov-gr{color:var(--main);text-shadow:0 0 10px rgba(126,184,255,0.7)}
 .team-panel.counter .row-ov-gr{color:var(--counter);text-shadow:0 0 10px rgba(52,211,153,0.7)}
-/* Countdown phase */
+
 .row-ov-count{position:absolute;left:50%;transform:translateX(-50%);font-size:54px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;text-align:center}
 .team-panel.main .row-ov-count{color:var(--main);text-shadow:0 0 12px rgba(126,184,255,0.8)}
 .team-panel.counter .row-ov-count{color:var(--counter);text-shadow:0 0 12px rgba(52,211,153,0.8)}
@@ -342,9 +342,9 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 
-// =========================================================
-// Firebase Setup
-// =========================================================
+
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFsBvmgj7-VQYcFVj6snk7l5ramb1mAUk",
@@ -361,12 +361,12 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
 
-// Helper to get a database reference under the "svs" namespace
+
 function ref(path) {
   return db.ref("svs/" + path);
 }
 
-// Shorthand write helpers
+
 function fbSet(path, value) {
   ref(path).set(value);
 }
@@ -376,50 +376,50 @@ function fbUpdate(path, value) {
 }
 
 
-// =========================================================
-// Constants
-// =========================================================
 
-// Flag to block the normal GET READY overlay during a reopen sequence
+
+
+
+
 let isReopening = false;
-// Track max delay across counter rallies so we know when ALL countdowns finish
+
 let reopenMaxDelay = 0;
 
-const BASE_TIME    = 300; // 5:00 minutes in seconds (main/counter rally)
-const ENEMY_BASE   = 295; // 4:55 minutes in seconds (enemy rally)
+const BASE_TIME    = 300; 
+const ENEMY_BASE   = 295; 
 const ADMIN_HASH   = "ef2a09456fa517d87905aff62ae8c262cca11656bea97e9e90b8aef87c9cdf30";
-const COUNTDOWN_MS = 5000; // 2s GET READY + 3s countdown before launch
+const COUNTDOWN_MS = 5000; 
 
 
-// =========================================================
-// App State
-// =========================================================
+
+
+
 
 let isUnlocked = false;
 let lang = "en";
-let L = null; // current language strings, set by setLang()
+let L = null; 
 
-// Local mirror of Firebase state — updated by listeners
+
 let STATE = {
   main:    { rallies: [], started: false, timerStart: null },
   counter: { rallies: [], started: false, timerStart: null },
   enemy:   { rallies: [], started: false, timerStart: null }
 };
 
-// Previous state snapshot — used to detect changes
+
 let prevState = {
   main:    { started: false, timerStart: null },
   counter: { started: false, timerStart: null },
   enemy:   { started: false, timerStart: null }
 };
 
-// Interval IDs for local UI tickers
+
 let localTickers = { main: null, counter: null, enemy: null };
 
 
-// =========================================================
-// Language / i18n
-// =========================================================
+
+
+
 
 const LANGS = {
   en: {
@@ -610,13 +610,13 @@ function setLang(newLang) {
   lang = newLang;
   L    = LANGS[lang];
 
-  // Update language toggle buttons
+  
   const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR"};
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.textContent === langLabels[lang]);
   });
 
-  // Update form labels
+  
   document.getElementById("t-name-label").textContent  = L.nameLabel;
   document.getElementById("t-march-label").textContent = L.marchLabel;
   document.getElementById("t-team-label").textContent  = L.teamLabel;
@@ -625,13 +625,13 @@ function setLang(newLang) {
   document.getElementById("opt-counter").textContent   = L.optCounter;
   document.getElementById("opt-enemy").textContent     = L.optEnemy;
 
-  // Update team titles
+  
   document.getElementById("t-main-title").textContent    = L.mainTitle;
   document.getElementById("t-counter-title").textContent = L.counterTitle;
   document.getElementById("t-enemy-title").textContent   = L.enemyTitle;
   document.getElementById("auto-note").innerHTML         = L.autoNote;
 
-  // Update button labels and re-render all teams
+  
   ["main", "counter", "enemy"].forEach(team => {
     const startBtn = document.getElementById("start-" + team);
     if (startBtn) startBtn.textContent = L.startBtn;
@@ -641,9 +641,9 @@ function setLang(newLang) {
 }
 
 
-// =========================================================
-// PIN / Admin Auth
-// =========================================================
+
+
+
 
 function toggleLock() {
   isUnlocked ? lock() : openPin();
@@ -663,7 +663,7 @@ function closePin() {
 async function submitPin() {
   const input = document.getElementById("pin-input").value;
 
-  // Hash the entered PIN and compare to stored hash
+  
   const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
   const hash   = Array.from(new Uint8Array(buffer))
     .map(b => b.toString(16).padStart(2, "0"))
@@ -693,31 +693,31 @@ function lock() {
   ["main", "counter", "enemy"].forEach(renderTeam);
 }
 
-// Show or hide start/reset buttons based on admin status
+
 function setControlsVisibility(visible) {
   document.querySelectorAll(".t-start, .t-reset, .reopen-btn").forEach(el => {
     el.classList.toggle("locked-hidden", !visible);
   });
 }
 
-// Enable/disable counter restart button based on whether counter is running
+
 function updateCounterRestartBtn() {
   const btn = document.getElementById("restart-counter-btn");
   if (!btn) return;
   btn.disabled = !STATE.counter.started || !STATE.counter.rallies.length;
 }
 
-// Allow Enter key to submit PIN
+
 document.getElementById("pin-input").addEventListener("keydown", e => {
   if (e.key === "Enter") submitPin();
 });
 
 
-// =========================================================
-// Utility Functions
-// =========================================================
 
-// Format seconds as MM:SS
+
+
+
+
 function fmt(totalSeconds) {
   const s = Math.max(0, Math.round(totalSeconds));
   const mins = Math.floor(s / 60).toString().padStart(2, "0");
@@ -725,13 +725,13 @@ function fmt(totalSeconds) {
   return mins + ":" + secs;
 }
 
-// Recalculate start delays so all rallies in a team finish at the same time.
-// The rally with the longest total time starts first (delay = 0),
-// and others get a delay equal to the difference.
+
+
+
 function calcDelays(rallies) {
   if (!rallies.length) return rallies;
 
-  // Only consider active (non-canceled) rallies for delay calculation
+  
   const active = rallies.filter(r => !r.canceled);
   if (!active.length) return rallies;
 
@@ -743,13 +743,13 @@ function calcDelays(rallies) {
   });
 }
 
-// Get elapsed seconds since a timerStart timestamp
+
 function getElapsed(timerStart) {
   if (!timerStart) return null;
   return (Date.now() - timerStart) / 1000;
 }
 
-// Determine the current state of a rally based on elapsed time
+
 function getRallyState(rally, elapsed, teamStarted) {
   if (!teamStarted || elapsed === null) return "idle";
   if (elapsed < 0)             return "idle";
@@ -761,9 +761,9 @@ function getRallyState(rally, elapsed, teamStarted) {
   return "done";
 }
 
-// =========================================================
-// Audio (Web Audio API — no external files needed)
-// =========================================================
+
+
+
 
 let audioCtx = null;
 
@@ -771,13 +771,13 @@ function getAudioCtx() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
-  // Resume if suspended (browser autoplay policy)
+  
   if (audioCtx.state === "suspended") audioCtx.resume();
   return audioCtx;
 }
 
-// Play a single tone
-// freq: Hz, duration: seconds, volume: 0-1, type: sine/square/triangle
+
+
 function playTone(freq, duration, volume = 0.3, type = "sine") {
   try {
     const ctx  = getAudioCtx();
@@ -790,7 +790,7 @@ function playTone(freq, duration, volume = 0.3, type = "sine") {
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
-    // Smooth attack & release to avoid clicks
+    
     gain.gain.setValueAtTime(0, ctx.currentTime);
     gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.015);
     gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
@@ -800,30 +800,30 @@ function playTone(freq, duration, volume = 0.3, type = "sine") {
   } catch (e) {}
 }
 
-// Soft "get ready" beep — played when overlay first appears
+
 function beepGetReady() {
   playTone(440, 0.25, 0.25, "sine");
 }
 
-// Countdown tick beep — calm, one per second
+
 function beepTick() {
   playTone(520, 0.12, 0.22, "sine");
 }
 
-// START beep — two short rising tones
+
 function beepStart() {
   playTone(600, 0.10, 0.30, "sine");
   setTimeout(() => playTone(800, 0.18, 0.35, "sine"), 110);
 }
 
-// 3x long beep for RESTART RESTART RESTART
+
 function beepAlarm() {
   playTone(520, 0.45, 0.30, "sine");
   setTimeout(() => playTone(520, 0.45, 0.30, "sine"), 600);
   setTimeout(() => playTone(520, 0.45, 0.30, "sine"), 1200);
 }
 
-// Stop all currently scheduled/playing audio
+
 function stopAllAudio() {
   try {
     if (audioCtx) {
@@ -833,26 +833,26 @@ function stopAllAudio() {
   } catch(e) {}
 }
 
-// Unlock audio on first user interaction (required by browsers)
+
 document.addEventListener("click",      () => getAudioCtx(), { once: true });
 document.addEventListener("touchstart", () => getAudioCtx(), { once: true });
 
 
-// =========================================================
-// Utility Functions
-// =========================================================
 
-// Trigger CSS pulse animation on an element
+
+
+
+
 function pulseCt(el) {
   el.classList.remove("pulse");
-  void el.offsetWidth; // force reflow
+  void el.offsetWidth; 
   el.classList.add("pulse");
 }
 
 
-// =========================================================
-// Main Panel Toggle
-// =========================================================
+
+
+
 
 function toggleMainPanel() {
   const panel = document.querySelector(".team-panel.main");
@@ -864,9 +864,9 @@ function toggleMainPanel() {
 }
 
 
-// =========================================================
-// Rally Management (Admin Actions → Firebase)
-// =========================================================
+
+
+
 
 function addRally() {
   const name    = document.getElementById("inp-name").value.trim();
@@ -906,7 +906,7 @@ function addRally() {
   const updated = calcDelays([...STATE[team].rallies, newRally]);
   fbSet(team + "/rallies", updated);
 
-  // Clear inputs and refocus name field
+  
   document.getElementById("inp-name").value  = "";
   document.getElementById("inp-march").value = "";
   document.getElementById("inp-name").focus();
@@ -926,11 +926,11 @@ function updateNote(team, id, value) {
   fbSet(team + "/rallies", updated);
 }
 
-// Track pending cancel resets so we don't double-schedule
+
 const pendingCancelResets = new Set();
 
 function cancelRally(team, id) {
-  // Stop ticker immediately
+  
   stopLocalTicker(team);
 
   const updated = STATE[team].rallies.map(r =>
@@ -938,14 +938,14 @@ function cancelRally(team, id) {
   );
   fbSet(team + "/rallies", updated);
 
-  // Schedule auto-reset after 4s — only this client writes the reset
+  
   const key = team + "_" + id;
   if (pendingCancelResets.has(key)) return;
   pendingCancelResets.add(key);
 
   setTimeout(() => {
     pendingCancelResets.delete(key);
-    // Re-read current state to make sure it's still canceled
+    
     const current = (STATE[team].rallies || []).find(r => r.id === id);
     if (!current || !current.canceled) return;
 
@@ -965,20 +965,20 @@ function unCancelRally(team, id) {
 }
 
 
-// =========================================================
-// Timer Start / Reset (Admin Actions → Firebase)
-// =========================================================
 
-// Start the GET READY countdown for a main or counter team.
-// timerStart is set 7 seconds in the future so clients can show
-// the overlay before the actual timer begins.
+
+
+
+
+
+
 function startSequence(team) {
   if (!STATE[team].rallies.length) return;
   const launchAt = Date.now() + COUNTDOWN_MS;
   fbUpdate(team, { started: true, timerStart: launchAt });
 }
 
-// Start all enemy rallies at once and optionally trigger counter
+
 function startAllEnemy() {
   const now     = Date.now();
   const updated = STATE.enemy.rallies.map(r =>
@@ -986,20 +986,20 @@ function startAllEnemy() {
   );
   fbSet("enemy/rallies", updated);
 
-  // Auto-trigger counter rally if it hasn't started yet
+  
   if (STATE.counter.rallies.length && !STATE.counter.started) {
     startSequence("counter");
   }
 }
 
-// Shared restart countdown logic used by both Restart buttons
-// team: which team to restart ("counter" or "enemy-counter")
-// enemyRallies: if provided, also restart enemy rallies immediately
+
+
+
 function runRestartSequence(counterRallies, enemyRalliesUpdate) {
   const REOPEN_BASE    = 5;
   const LABEL_PHASE_MS = 1500;
 
-  // Show RESTART RESTART RESTART overlay on each counter row
+  
   counterRallies.forEach(r => {
     const ov  = document.getElementById("reopen-ov-counter-" + r.id);
     const txt = document.getElementById("reopen-txt-counter-" + r.id);
@@ -1010,17 +1010,17 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
     if (cnt) { cnt.textContent = ""; cnt.style.display = "none"; }
   });
 
-  // After label phase, run per-rally countdown
+  
   setTimeout(() => {
 
-    // Write Firebase NOW with launchAt = REOPEN_BASE seconds from now
-    // isReopening blocks renderTeam so DOM stays intact during countdown
+    
+    
     const launchAt = Date.now() + (REOPEN_BASE * 1000);
     const updates = { "counter/started": true, "counter/timerStart": launchAt };
     if (enemyRalliesUpdate) updates["enemy/rallies"] = enemyRalliesUpdate;
     db.ref("svs").update(updates);
 
-    // Figure out which rally finishes last
+    
     const maxDelay = Math.max(...counterRallies.map(r => r.delay || 0));
 
     counterRallies.forEach(r => {
@@ -1051,18 +1051,18 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
           clearInterval(iv);
           cnt2.className   = "reopen-count start";
           cnt2.textContent = L.startText;
-          beepStart(); // each rally beeps at its own START moment
+          beepStart(); 
 
-          // Hide this rally's overlay after 800ms
+          
           setTimeout(() => {
             if (ov2) ov2.classList.add("hidden");
             const txt2 = document.getElementById("reopen-txt-counter-" + r.id);
             if (txt2) txt2.style.display = "";
 
-            // Only release isReopening after the LAST rally finishes
+            
             if (r.delay === maxDelay) {
               isReopening = false;
-              // Now safe to re-render counter
+              
               renderTeam("counter");
             }
           }, 800);
@@ -1072,25 +1072,25 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
   }, LABEL_PHASE_MS);
 }
 
-// ENEMY Restart: stops enemy + counter, restarts both
+
 function reopenRallies() {
   const reopenBtn = document.getElementById("reopen-btn");
   if (reopenBtn) reopenBtn.disabled = true;
 
   isReopening = true;
   stopAllAudio();
-  // Stop counter and enemy tickers — do NOT stop main
+  
   stopLocalTicker("counter");
   if (localTickers.enemy) { clearInterval(localTickers.enemy); localTickers.enemy = null; }
 
-  // Hide any GET READY overlays on counter rows
+  
   document.querySelectorAll("#list-counter .row-overlay").forEach(ov => ov.classList.add("hidden"));
   document.querySelectorAll("#list-counter .reopen-overlay").forEach(ov => ov.classList.add("hidden"));
 
-  // Stop counter in Firebase immediately
+  
   fbUpdate("counter", { started: false, timerStart: null });
 
-  // Prepare enemy restart (will be written at START moment)
+  
   const now = Date.now();
   const enemyRestarted = STATE.enemy.rallies.map(r => ({
     ...r, started: true, timerStart: now, canceled: false
@@ -1098,7 +1098,7 @@ function reopenRallies() {
 
   const counterRallies = STATE.counter.rallies;
   if (!counterRallies.length) {
-    // No counter rallies — just restart enemy immediately
+    
     fbSet("enemy/rallies", enemyRestarted);
     isReopening = false;
     return;
@@ -1108,7 +1108,7 @@ function reopenRallies() {
   runRestartSequence(counterRallies, enemyRestarted);
 }
 
-// COUNTER Restart: stops only counter and restarts it
+
 function restartCounterRally() {
   const btn = document.getElementById("restart-counter-btn");
   if (btn) btn.disabled = true;
@@ -1126,10 +1126,10 @@ function restartCounterRally() {
   if (!counterRallies.length) { isReopening = false; return; }
 
   beepAlarm();
-  runRestartSequence(counterRallies, null); // no enemy update
+  runRestartSequence(counterRallies, null); 
 }
 
-// Start a single enemy rally
+
 function startEnemyRallyFb(id) {
   const now     = Date.now();
   const updated = STATE.enemy.rallies.map(r =>
@@ -1140,7 +1140,7 @@ function startEnemyRallyFb(id) {
 
 function resetTeam(team) {
   if (team === "enemy") {
-    // Reset each individual rally's timer
+    
     const updated = STATE.enemy.rallies.map(r => ({
       ...r,
       started:    false,
@@ -1153,19 +1153,19 @@ function resetTeam(team) {
 }
 
 
-// =========================================================
-// GET READY Overlay
-// =========================================================
 
-// Returns the overlay element for a specific rally row, or null
+
+
+
+
 function getOv(team, id) {
   const row = document.querySelector(`#list-${team} [data-id="${id}"]`);
   return row ? row.querySelector(".row-overlay") : null;
 }
 
-// Run the animated GET READY → countdown overlay for a single rally.
-// Phase 1 (2s): Shows "[Name] GET READY!!" centered
-// Phase 2 (3+delay s): Countdown numbers, last 2 turn red, then "START!"
+
+
+
 function runOverlay(team, rally) {
   const row = document.querySelector(`#list-${team} [data-id="${rally.id}"]`);
   if (!row) return;
@@ -1177,7 +1177,7 @@ function runOverlay(team, rally) {
 
   if (!ov) return;
 
-  // Phase 1: GET READY
+  
   ov.classList.remove("hidden");
   if (infoBlock) infoBlock.style.display = "flex";
   grEl.textContent      = L.grText;
@@ -1185,10 +1185,10 @@ function runOverlay(team, rally) {
   countEl.className     = "row-ov-count";
   countEl.style.display = "none";
 
-  // 🔊 JETZT: jede Rally piept
+  
   beepGetReady();
 
-  // Phase 2: Countdown
+  
   setTimeout(() => {
     const ov2      = getOv(team, rally.id);
     if (!ov2) return;
@@ -1204,7 +1204,7 @@ function runOverlay(team, rally) {
     countEl2.textContent = count;
     pulseCt(countEl2);
 
-    // 🔊 erster Tick
+    
     beepTick();
 
     const interval = setInterval(() => {
@@ -1222,7 +1222,7 @@ function runOverlay(team, rally) {
         ce.className   = "row-ov-count" + (count <= 2 ? " red" : "");
         pulseCt(ce);
 
-        // 🔊 jeder Tick piept jetzt
+        
         beepTick();
 
       } else {
@@ -1230,7 +1230,7 @@ function runOverlay(team, rally) {
         ce.className   = "row-ov-count start";
         ce.textContent = L.startText;
 
-        // 🔊 START für jede Rally
+        
         beepStart();
 
         setTimeout(() => {
@@ -1244,9 +1244,9 @@ function runOverlay(team, rally) {
 }
 
 
-// =========================================================
-// Local Tickers (UI Updates)
-// =========================================================
+
+
+
 
 function startLocalTicker(team) {
   if (localTickers[team]) clearInterval(localTickers[team]);
@@ -1260,7 +1260,7 @@ function stopLocalTicker(team) {
   }
 }
 
-// Update the UI for all rallies in a main/counter team
+
 function tickTeam(team) {
   const T = STATE[team];
   if (!T.started || !T.timerStart) return;
@@ -1271,7 +1271,7 @@ function tickTeam(team) {
     const row = document.querySelector(`#list-${team} [data-id="${rally.id}"]`);
     if (!row) return;
 
-    // Don't update rows that are showing the GET READY overlay or are canceled
+    
     const overlay = row.querySelector(".row-overlay");
     if (overlay && !overlay.classList.contains("hidden")) return;
     if (rally.canceled) return;
@@ -1314,7 +1314,7 @@ function tickTeam(team) {
       time.textContent  = fmt(rally.total - re);
       pb.style.width    = Math.min(100, (re / rally.total * 100)).toFixed(1) + "%";
 
-    } else { // done
+    } else { 
       badge.className   = "r-badge fin";
       badge.textContent = L.badgeDone;
       time.className    = "r-time t-done";
@@ -1323,7 +1323,7 @@ function tickTeam(team) {
     }
   });
 
-  // Auto-reset the team in Firebase once all rallies are done
+  
   const allDone = T.rallies.every(r => getRallyState(r, elapsed, T.started) === "done");
   if (elapsed >= 0 && allDone) {
     stopLocalTicker(team);
@@ -1331,12 +1331,12 @@ function tickTeam(team) {
   }
 }
 
-// Update the UI for enemy rallies (each runs on its own timer)
+
 function tickEnemy() {
   STATE.enemy.rallies.forEach(rally => {
     if (!rally.started || !rally.timerStart) return;
     if (rally.canceled) {
-      // Stop this rally's ticker
+      
       return;
     }
 
@@ -1366,7 +1366,7 @@ function tickEnemy() {
       row.className     = "rally-row st-marching";
 
     } else {
-      // Timer finished — auto-reset this rally in Firebase
+      
       const updated = STATE.enemy.rallies.map(r =>
         r.id === rally.id ? { ...r, started: false, timerStart: null } : r
       );
@@ -1376,23 +1376,23 @@ function tickEnemy() {
 }
 
 
-// =========================================================
-// Render
-// =========================================================
+
+
+
 
 function renderTeam(team) {
   const T       = STATE[team];
   const list    = document.getElementById("list-" + team);
   const startBtn = document.getElementById("start-" + team);
 
-  // Update button labels
+  
   if (startBtn) startBtn.textContent = L.startBtn;
   document.getElementById("t-reset-" + team).textContent = L.resetBtn;
 
-  // Enable/disable start button
+  
   if (startBtn) startBtn.disabled = !T.rallies.length || T.started;
 
-  // Don't rebuild counter DOM while reopen overlay is running — would destroy countdown elements
+  
   if (team === "counter" && isReopening) return;
 
   if (!T.rallies || !T.rallies.length) {
@@ -1483,13 +1483,13 @@ function renderTeam(team) {
 }
 
 
-// =========================================================
-// Firebase Listeners (Real-time Sync)
-// =========================================================
+
+
+
 
 function listenTeam(team) {
   ref(team).on("value", snap => {
-    // Show the main UI once we get the first data
+    
     document.getElementById("connecting").style.display = "none";
     document.getElementById("main-ui").style.display   = "block";
     document.getElementById("sync-dot").classList.add("online");
@@ -1503,7 +1503,7 @@ function listenTeam(team) {
     const wasStarted   = !!prev.started;
     const hadTimerStart = prev.timerStart || null;
 
-    // Update local state
+    
     STATE[team]     = { rallies: newRallies, started: newStarted, timerStart: newTimerStart };
     prevState[team] = { started: newStarted, timerStart: newTimerStart };
 
@@ -1513,7 +1513,7 @@ function listenTeam(team) {
       if (newStarted && newTimerStart) {
         const elapsed = getElapsed(newTimerStart);
 
-        // Only run the GET READY overlay if this is a fresh start
+        
         const isFreshStart = !wasStarted || hadTimerStart !== newTimerStart;
         if (isFreshStart && elapsed < 0 && !isReopening) {
           setTimeout(() => newRallies.forEach(r => runOverlay(team, r)), 50);
@@ -1525,7 +1525,7 @@ function listenTeam(team) {
       }
 
     } else {
-      // For enemy team, start/stop the enemy ticker based on active rallies
+      
       const hasActiveRallies = newRallies.some(r => r.started);
       if (hasActiveRallies) {
         if (!localTickers.enemy) {
@@ -1541,10 +1541,10 @@ function listenTeam(team) {
   });
 }
 
-// Start listening to all three teams
+
 ["main", "counter", "enemy"].forEach(listenTeam);
 
-// Track connection status (online/offline indicator)
+
 db.ref(".info/connected").on("value", snap => {
   const dot = document.getElementById("sync-dot");
   if (snap.val()) {
@@ -1557,9 +1557,9 @@ db.ref(".info/connected").on("value", snap => {
 });
 
 
-// =========================================================
-// Starfield Background Animation
-// =========================================================
+
+
+
 
 (function initStars() {
   const canvas = document.getElementById("stars");
@@ -1592,7 +1592,7 @@ db.ref(".info/connected").on("value", snap => {
   function drawFrame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw nebula blobs
+    
     nebulae.forEach(n => {
       const cx = n.x * canvas.width;
       const cy = n.y * canvas.height;
@@ -1609,7 +1609,7 @@ db.ref(".info/connected").on("value", snap => {
       ctx.restore();
     });
 
-    // Draw twinkling stars
+    
     stars.forEach(star => {
       star.phase += star.speed;
       if (star.phase > 1) star.phase = 0;
@@ -1628,9 +1628,9 @@ db.ref(".info/connected").on("value", snap => {
 })();
 
 
-// =========================================================
-// Keyboard Shortcuts (form inputs)
-// =========================================================
+
+
+
 
 document.getElementById("inp-name").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("inp-march").focus();
@@ -1641,9 +1641,9 @@ document.getElementById("inp-march").addEventListener("keydown", e => {
 });
 
 
-// =========================================================
-// Init
-// =========================================================
+
+
+
 
 setLang("en");
 setControlsVisibility(false);
