@@ -181,6 +181,11 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .r-left{flex:1;min-width:0}
 .r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
+.r-note-input{background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.25);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;outline:none;padding:1px 4px;width:120px;letter-spacing:.5px;margin-left:6px;transition:border-color .2s}
+.r-note-input:focus{border-bottom-color:var(--accent)}
+.r-note-input::placeholder{color:var(--muted);opacity:.6}
+.r-note-text{font-size:13px;color:var(--accent);font-weight:600;margin-left:6px;letter-spacing:.5px;opacity:.85}
+@media(max-width:600px){.r-note-input,.r-note-text{display:none}}
 .r-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .r-badge{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;white-space:nowrap}
 .r-badge.idle{background:rgba(80,120,255,0.1);color:var(--muted)}
@@ -210,7 +215,8 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .reopen-count{font-size:52px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--counter);text-shadow:0 0 14px rgba(52,211,153,0.8);text-align:center}
 .reopen-count.red{color:var(--red)!important;text-shadow:0 0 14px rgba(239,68,68,0.8)!important}
 .reopen-count.start{color:var(--green)!important;text-shadow:0 0 14px rgba(52,211,153,0.9)!important;font-size:32px!important}
-.reopen-count.pulse{animation:pulse .35s ease-out}
+.reopen-count.pulse{animation:reopenPulse .35s ease-out}
+@keyframes reopenPulse{0%{transform:scale(1.25)}100%{transform:scale(1)}}
 .canceled-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(2,8,24,0.88);border-radius:6px;transition:opacity .3s}
 .canceled-overlay.hidden{display:none}
 .canceled-text{font-size:22px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);text-shadow:0 0 16px rgba(239,68,68,0.8)}
@@ -880,7 +886,8 @@ function addRally() {
     total:     total,
     delay:     0,
     started:   false,
-    timerStart: null
+    timerStart: null,
+    note:      ""
   };
 
   const updated = calcDelays([...STATE[team].rallies, newRally]);
@@ -896,6 +903,14 @@ function deleteRally(team, id) {
   if (!isUnlocked) return;
   const remaining = STATE[team].rallies.filter(r => r.id !== id);
   fbSet(team + "/rallies", calcDelays(remaining));
+}
+
+function updateNote(team, id, value) {
+  if (!isUnlocked) return;
+  const updated = STATE[team].rallies.map(r =>
+    r.id === id ? { ...r, note: value } : r
+  );
+  fbSet(team + "/rallies", updated);
 }
 
 // Track pending cancel resets so we don't double-schedule
@@ -1387,7 +1402,12 @@ function renderTeam(team) {
       <div class="rally-row st-idle" data-id="${rally.id}">
         <div class="pb" style="width: 0%"></div>
         <div class="r-left">
-          <div class="r-name">${rally.name}</div>
+          <div class="r-name" style="display:flex;align-items:center;flex-wrap:wrap;gap:0">
+            ${rally.name}
+            ${isUnlocked
+              ? `<input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()">`
+              : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
+          </div>
           <div class="r-sub">${rally.march}s march · 04:55 base</div>
         </div>
         <div class="r-right">
@@ -1421,7 +1441,12 @@ function renderTeam(team) {
           <div class="row-ov-count"></div>
         </div>
         <div class="r-left">
-          <div class="r-name">${rally.name}</div>
+          <div class="r-name" style="display:flex;align-items:center;flex-wrap:wrap;gap:0">
+            ${rally.name}
+            ${isUnlocked
+              ? `<input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()">`
+              : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
+          </div>
           <div class="r-sub">${rally.march}s march · offset ${rally.delay > 0 ? "+" + fmt(rally.delay) : "first"}</div>
         </div>
         <div class="r-right">
@@ -1438,9 +1463,9 @@ function renderTeam(team) {
           <span class="canceled-text">RALLY CANCELED</span>
         </div>
         <div class="reopen-overlay hidden" id="reopen-ov-${team}-${rally.id}">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center">
             <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">RESTART RESTART RESTART</div>
-            <div class="reopen-count" id="reopen-cnt-${team}-${rally.id}" style="display:none"></div>
+            <div class="reopen-count" id="reopen-cnt-${team}-${rally.id}" style="display:none;width:100%;text-align:center"></div>
           </div>
         </div>
       </div>
