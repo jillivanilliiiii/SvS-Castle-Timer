@@ -99,7 +99,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   .team-header{margin-bottom:3px;padding-bottom:3px}
   .team-title{font-size:8px;letter-spacing:1px}
   .rally-row{padding:3px 8px;min-height:22px;border-radius:5px}
-  .r-name{font-size:11px}
+  .r-name{margin-right:auto;font-size:11px}
   .r-sub{display:none}
   .r-time{font-size:12px;min-width:36px}
   .r-badge{font-size:6px;padding:1px 3px}
@@ -183,30 +183,21 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
   min-width:0;
   display:flex;
   align-items:center;
-  gap:10px;
+  width:100%;
 }
-.r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.r-name{margin-right:auto;font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
 .r-note-wrap{
-  width:auto;
-  margin-top:0;
-  text-align:left;
+  margin:0 auto;
+  text-align:center;
 }
 .r-note-input{
+  text-align:center;
   width:120px;
-  text-align:left;
   background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.3);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;padding:2px 6px;width:160px;letter-spacing:.5px;text-align:center;transition:border-color .2s}
 .r-note-input:focus{border-bottom-color:var(--accent)}
 .r-note-input::placeholder{color:var(--muted);opacity:.6}
-.r-note-text{
-  font-size:15px;
-  color:var(--accent);
-  font-weight:600;
-  letter-spacing:.5px;
-  opacity:.85;
-  text-align:left;
-  white-space:nowrap;
-}
+.r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:center}
 @media(max-width:600px){.r-note-wrap{display:none}}
 .r-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .r-badge{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;white-space:nowrap}
