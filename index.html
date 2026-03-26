@@ -191,14 +191,13 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .r-note-input::placeholder{color:var(--muted);opacity:.6}
 .r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:center}
 @media(max-width:600px){.r-note-wrap{display:none}}
-.pet-row{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(126,184,255,0.1)}
-.team-panel.enemy .pet-row{border-top-color:rgba(239,68,68,0.1)}
-.pet-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;flex-shrink:0}
-.pet-time{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;min-width:46px}
-.pet-btn{padding:3px 9px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.4);border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap}
+.pet-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.pet-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;flex-shrink:0}
+.pet-time{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;min-width:50px}
+.pet-btn{padding:2px 7px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap}
 .pet-btn:hover{background:rgba(167,139,250,0.3)}
-.pet-btn.active{background:rgba(167,139,250,0.25);border-color:#a78bfa}
-.pet-bar{flex:1;height:4px;background:rgba(167,139,250,0.15);border-radius:2px;overflow:hidden}
+.pet-btn.active{background:rgba(167,139,250,0.2);border-color:#a78bfa}
+.pet-bar{flex:1;height:3px;background:rgba(167,139,250,0.12);border-radius:2px;overflow:hidden}
 .pet-bar-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#7eb8ff);border-radius:2px;transition:width .5s linear}
 @media(max-width:600px){.pet-row{display:none}}
 .r-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
@@ -1335,15 +1334,15 @@ function renderTeam(team) {
         <div class="pb" style="width: 0%"></div>
         <div class="r-left">
           <div class="r-name">${rally.name}</div>
-          ${isUnlocked
-            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
-            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
           <div class="pet-row">
             <span class="pet-label">PET</span>
             <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
             <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
           </div>
+          ${isUnlocked
+            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
+            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
 
         </div>
         <div class="r-right">
@@ -1378,15 +1377,15 @@ function renderTeam(team) {
         </div>
         <div class="r-left">
           <div class="r-name">${rally.name}</div>
-          ${isUnlocked
-            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
-            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
           <div class="pet-row">
             <span class="pet-label">PET</span>
             <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
             <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
           </div>
+          ${isUnlocked
+            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
+            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
 
         </div>
         <div class="r-right">
