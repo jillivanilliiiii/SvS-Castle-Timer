@@ -1340,8 +1340,8 @@ function renderTeam(team) {
             : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
           <div class="pet-row">
             <span class="pet-label">PET</span>
-            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/${PET_DURATION}/1000))*100).toFixed(1)+'%' : '100%'}"></div></div>
-            <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,${PET_DURATION}-((Date.now()-rally.petStart)/1000))) : fmtLong(${PET_DURATION})}</span>
+            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
+            <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
           </div>
 
@@ -1383,8 +1383,8 @@ function renderTeam(team) {
             : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
           <div class="pet-row">
             <span class="pet-label">PET</span>
-            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/${PET_DURATION}/1000))*100).toFixed(1)+'%' : '100%'}"></div></div>
-            <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,${PET_DURATION}-((Date.now()-rally.petStart)/1000))) : fmtLong(${PET_DURATION})}</span>
+            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
+            <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
           </div>
 
