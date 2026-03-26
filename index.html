@@ -1338,7 +1338,7 @@ function renderTeam(team) {
             <span class="pet-label">PET</span>
             <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
             <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-            <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
+            ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>` : ''}
           </div>
           ${isUnlocked
             ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
@@ -1381,7 +1381,7 @@ function renderTeam(team) {
             <span class="pet-label">PET</span>
             <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
             <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-            <button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>
+            ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? '⏹ Stop' : '▶ Start'}</button>` : ''}
           </div>
           ${isUnlocked
             ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
