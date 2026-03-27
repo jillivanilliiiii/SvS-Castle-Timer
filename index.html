@@ -84,6 +84,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 
 .teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .left-col{display:flex;flex-direction:column;gap:20px}
+.team-panel.counter{flex:1}
 @media(max-width:600px){
   .teams-grid{grid-template-columns:1fr;gap:6px}
   .left-col{gap:6px}
@@ -317,7 +318,6 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
           </div>
           <div class="rally-list" id="list-counter"></div>
         </div>
-      <div class="credit credit-desktop">Created by Jilli &middot; State 2691</div>
       </div>
       <div class="team-panel enemy">
         <div class="team-header">
@@ -332,6 +332,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
         <div class="auto-note" id="auto-note"></div>
       </div>
     </div>
+    <div class="credit credit-desktop" style="text-align:center;margin-top:14px">Created by Jilli &middot; State 2691</div>
   </div>
   <div class="connecting" id="connecting">Connecting...</div>
   <div class="credit credit-mobile">Created by Jilli &middot; State 2691</div>
