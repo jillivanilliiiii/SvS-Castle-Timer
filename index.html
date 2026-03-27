@@ -146,7 +146,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .team-panel.enemy .t-reset{border:1px solid var(--red-border);color:var(--muted)}
 .t-reset:hover{opacity:.7}
 .rally-list{display:flex;flex-direction:column;gap:8px}
-.rally-row{display:grid;grid-template-columns:140px 160px 1fr 110px 80px auto;align-items:center;gap:0 18px;padding:12px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:62px}
+.rally-row{display:grid;grid-template-columns:140px 90px 2fr 110px 80px auto;align-items:center;gap:0 18px;padding:12px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:62px}
 .team-panel.enemy .rally-row{border-color:rgba(239,68,68,0.12)}
 .rally-row .pb{position:absolute;bottom:0;left:0;height:3px;transition:width .5s linear}
 .team-panel.main .rally-row .pb{background:linear-gradient(90deg,var(--main),var(--green))}
@@ -176,10 +176,10 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 
 .r-left{display:flex;flex-direction:column;justify-content:center;min-width:0;overflow:hidden}
 .r-pet-col{display:flex;align-items:center;gap:6px;min-width:0}
-.r-note-col{display:flex;align-items:center;min-width:0}
+.r-note-col{display:flex;align-items:center;min-width:0;flex:2}
 .r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
-.pet-col{display:flex;align-items:center;gap:6px}
+.pet-col{display:flex;align-items:center;gap:4px;max-width:90px}
 .pet-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;flex-shrink:0}
 .pet-time{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;white-space:nowrap;min-width:52px}
 .pet-btn{padding:2px 7px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
