@@ -146,7 +146,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .team-panel.enemy .t-reset{border:1px solid var(--red-border);color:var(--muted)}
 .t-reset:hover{opacity:.7}
 .rally-list{display:flex;flex-direction:column;gap:8px}
-.rally-row{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:74px}
+.rally-row{display:grid;grid-template-columns:140px 160px 1fr 110px 80px auto;align-items:center;gap:0 18px;padding:12px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:62px}
 .team-panel.enemy .rally-row{border-color:rgba(239,68,68,0.12)}
 .rally-row .pb{position:absolute;bottom:0;left:0;height:3px;transition:width .5s linear}
 .team-panel.main .rally-row .pb{background:linear-gradient(90deg,var(--main),var(--green))}
@@ -173,45 +173,41 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .row-ov-count.start{color:var(--green)!important;text-shadow:0 0 12px rgba(52,211,153,0.9)!important;font-size:36px!important}
 .row-ov-count.pulse{animation:pulse .35s ease-out}
 @keyframes pulse{0%{transform:translateX(-50%) scale(1.25)}100%{transform:translateX(-50%) scale(1)}}
-.r-left{
-  flex:1;
-  min-width:0;
-  display:flex;
-  align-items:center;
-  width:100%;
-}
-.r-name{margin-right:auto;font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+
+.r-left{display:flex;flex-direction:column;justify-content:center;min-width:0;overflow:hidden}
+.r-pet-col{display:flex;align-items:center;gap:6px;min-width:0}
+.r-note-col{display:flex;align-items:center;min-width:0}
+.r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
-.r-note-wrap{
-  margin:0 auto;
-  text-align:center;
-}
-.r-note-input{
-  text-align:center;
-  width:120px;
-  background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.3);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;padding:2px 6px;width:160px;letter-spacing:.5px;text-align:center;transition:border-color .2s}
-.r-note-input:focus{border-bottom-color:var(--accent)}
-.r-note-input::placeholder{color:var(--muted);opacity:.6}
-.r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:center}
-@media(max-width:600px){.r-note-wrap{display:none}}
-.pet-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.pet-col{display:flex;align-items:center;gap:6px}
 .pet-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;flex-shrink:0}
-.pet-time{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;min-width:50px}
-.pet-btn{padding:2px 7px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap}
+.pet-time{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;white-space:nowrap;min-width:52px}
+.pet-btn{padding:2px 7px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .pet-btn:hover{background:rgba(167,139,250,0.3)}
 .pet-btn.active{background:rgba(167,139,250,0.2);border-color:#a78bfa}
-.pet-bar{flex:1;height:3px;background:rgba(167,139,250,0.12);border-radius:2px;overflow:hidden}
+.pet-bar{flex:1;height:3px;background:rgba(167,139,250,0.12);border-radius:2px;overflow:hidden;min-width:40px}
 .pet-bar-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#7eb8ff);border-radius:2px;transition:width .5s linear}
-@media(max-width:600px){.pet-row{display:none}}
-.r-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.r-badge{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;white-space:nowrap}
+.r-note-col{display:flex;align-items:center;min-width:0;overflow:hidden}
+.r-note-wrap{display:flex;align-items:center;justify-content:flex-start}
+.r-note-input{background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.3);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;padding:2px 6px;width:100%;letter-spacing:.5px;text-align:left;transition:border-color .2s}
+.r-note-input:focus{border-bottom-color:var(--accent)}
+.r-note-input::placeholder{color:var(--muted);opacity:.6}
+.r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-right{display:contents}
+@media(max-width:600px){
+  .rally-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;min-height:40px}
+  .pet-row{display:none}
+  .r-note-wrap{display:none}
+  .r-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+}
+.r-badge{font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;white-space:nowrap;justify-self:end}
 .r-badge.idle{background:rgba(80,120,255,0.1);color:var(--muted)}
 .r-badge.wait{background:rgba(251,191,36,.15);color:var(--gold)}
 .r-badge.rally{background:rgba(126,184,255,.15);color:var(--accent)}
 .team-panel.enemy .r-badge.rally{background:rgba(239,68,68,.15);color:var(--red)}
 .r-badge.march{background:rgba(167,139,250,.2);color:var(--blue)}
 .r-badge.fin{background:rgba(80,100,160,.1);color:var(--muted)}
-.r-time{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;min-width:68px;text-align:right}
+.r-time{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;text-align:right;white-space:nowrap}
 .team-panel.main .r-time{color:var(--main)}
 .team-panel.counter .r-time{color:var(--counter)}
 .team-panel.enemy .r-time{color:var(--red)}
@@ -1533,35 +1529,28 @@ function renderTeam(team) {
   if (team === "enemy") {
     list.innerHTML = T.rallies.map(rally => `
       <div class="rally-row st-idle" data-id="${rally.id}">
-        <div class="pb" style="width: 0%"></div>
-        <div class="r-left">
-          <div class="r-name">${rally.name}</div>
-          <div class="pet-row">
-            <span class="pet-label">PET</span>
-            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
-            <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-            ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? '${L.petStop}' : '${L.petStart}'}</button>` : ''}
-          </div>
-          ${isUnlocked
-            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
-            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
-
+        <div class="pb" style="width:0%"></div>
+        <div class="r-left"><div class="r-name">${rally.name}</div></div>
+        <div class="r-pet-col">
+          <span class="pet-label">${L.petLabel}</span>
+          <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
+          <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
+          ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
         </div>
-        <div class="r-right">
-          <span class="r-badge idle">${L.badgeReady}</span>
-          <span class="r-time">${fmt(ENEMY_BASE)}</span>
-          ${isUnlocked && !rally.started && !rally.canceled
-            ? `<button class="e-start-btn" onclick="startEnemyRallyFb(${rally.id})">${L.eStartBtn}</button>`
-            : ""}
-          ${isUnlocked && rally.started && !rally.canceled
-            ? `<button class="cancel-btn" onclick="cancelRally('enemy',${rally.id})">${L.cancelBtn}</button>`
-            : ""}
-          ${showDelete
-            ? `<button class="del-btn" onclick="deleteRally('enemy', ${rally.id})">✕</button>`
-            : ""}
+        <div class="r-note-col">
+          ${isUnlocked
+            ? `<input class="r-note-input" placeholder="${L.notePlaceholder}" value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()">`
+            : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
+        </div>
+        <span class="r-badge idle">${L.badgeReady}</span>
+        <span class="r-time">${fmt(ENEMY_BASE)}</span>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${isUnlocked && !rally.started && !rally.canceled ? `<button class="e-start-btn" onclick="startEnemyRallyFb(${rally.id})">${L.eStartBtn}</button>` : ""}
+          ${isUnlocked && rally.started && !rally.canceled ? `<button class="cancel-btn" onclick="cancelRally('enemy',${rally.id})">${L.cancelBtn}</button>` : ""}
+          ${showDelete ? `<button class="del-btn" onclick="deleteRally('enemy',${rally.id})">✕</button>` : ""}
         </div>
         <div class="canceled-overlay${rally.canceled ? "" : " hidden"}">
-          <span class="canceled-text">RALLY CANCELED</span>
+          <span class="canceled-text">${L.canceledText}</span>
         </div>
       </div>
     `).join("");
@@ -1569,7 +1558,7 @@ function renderTeam(team) {
   } else {
     list.innerHTML = T.rallies.map(rally => `
       <div class="rally-row st-idle" data-id="${rally.id}">
-        <div class="pb" style="width: 0%"></div>
+        <div class="pb" style="width:0%"></div>
         <div class="row-overlay hidden">
           <div class="row-ov-info">
             <div class="row-ov-name">${rally.name}</div>
@@ -1577,35 +1566,30 @@ function renderTeam(team) {
           </div>
           <div class="row-ov-count"></div>
         </div>
-        <div class="r-left">
-          <div class="r-name">${rally.name}</div>
-          <div class="pet-row">
-            <span class="pet-label">PET</span>
-            <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
-            <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-            ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? '${L.petStop}' : '${L.petStart}'}</button>` : ''}
-          </div>
-          ${isUnlocked
-            ? `<div class="r-note-wrap"><input class="r-note-input" placeholder="Note..." value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()"></div>`
-            : rally.note ? `<div class="r-note-wrap"><span class="r-note-text">${rally.note}</span></div>` : ''}
-
+        <div class="r-left"><div class="r-name">${rally.name}</div></div>
+        <div class="r-pet-col">
+          <span class="pet-label">${L.petLabel}</span>
+          <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
+          <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
+          ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
         </div>
-        <div class="r-right">
-          <span class="r-badge idle">${L.badgeReady}</span>
-          <span class="r-time">${fmt(BASE_TIME)}</span>
-          ${isUnlocked && T.started && !rally.canceled
-            ? `<button class="cancel-btn" onclick="cancelRally('${team}',${rally.id})">${L.cancelBtn}</button>`
-            : ""}
-          ${showDelete
-            ? `<button class="del-btn" onclick="deleteRally('${team}', ${rally.id})">✕</button>`
-            : ""}
+        <div class="r-note-col">
+          ${isUnlocked
+            ? `<input class="r-note-input" placeholder="${L.notePlaceholder}" value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()">`
+            : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
+        </div>
+        <span class="r-badge idle">${L.badgeReady}</span>
+        <span class="r-time">${fmt(BASE_TIME)}</span>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${isUnlocked && T.started && !rally.canceled ? `<button class="cancel-btn" onclick="cancelRally('${team}',${rally.id})">${L.cancelBtn}</button>` : ""}
+          ${showDelete ? `<button class="del-btn" onclick="deleteRally('${team}',${rally.id})">✕</button>` : ""}
         </div>
         <div class="canceled-overlay${rally.canceled ? "" : " hidden"}">
-          <span class="canceled-text">RALLY CANCELED</span>
+          <span class="canceled-text">${L.canceledText}</span>
         </div>
         <div class="reopen-overlay hidden" id="reopen-ov-${team}-${rally.id}">
           <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center">
-            <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">RESTART RESTART RESTART</div>
+            <div class="reopen-text" id="reopen-txt-${team}-${rally.id}">${L.restartText}</div>
             <div class="reopen-count" id="reopen-cnt-${team}-${rally.id}" style="display:none;width:100%;text-align:center"></div>
           </div>
         </div>
