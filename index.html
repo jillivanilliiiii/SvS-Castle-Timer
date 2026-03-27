@@ -327,7 +327,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
             <div class="team-title" id="t-main-title">Main Rally</div>
             <div class="team-btns">
               <button class="t-start" id="start-main" onclick="startSequence('main')" disabled></button>
-              <button class="t-reset" id="t-reset-main" onclick="resetTeam('main')"></button>
+              <button class="t-reset" id="t-reset-main" onclick="resetTeam('main')"></button> ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ""}
             </div>
           </div>
           <div class="rally-list" id="list-main"></div>
@@ -338,7 +338,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
             <div class="team-btns">
               <button class="t-start" id="start-counter" onclick="startSequence('counter')" disabled></button>
               <button class="reopen-btn locked-hidden" id="restart-counter-btn" onclick="restartCounterRally()" disabled>↺ Restart</button>
-              <button class="t-reset" id="t-reset-counter" onclick="resetTeam('counter')"></button>
+              <button class="t-reset" id="t-reset-counter" onclick="resetTeam('counter')"></button> ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ""}
             </div>
           </div>
           <div class="rally-list" id="list-counter"></div>
@@ -350,7 +350,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
           <div class="team-btns">
             <button class="t-start" id="start-enemy" onclick="startAllEnemy()" disabled style="background:var(--red);color:#fff"></button>
             <button class="reopen-btn locked-hidden" id="reopen-btn" onclick="reopenRallies()" disabled>↺ Restart</button>
-            <button class="t-reset" id="t-reset-enemy" onclick="resetTeam('enemy')"></button>
+            <button class="t-reset" id="t-reset-enemy" onclick="resetTeam('enemy')"></button> ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ""}
           </div>
         </div>
         <div class="rally-list" id="list-enemy"></div>
@@ -1536,16 +1536,6 @@ function renderTeam(team) {
           
           <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
           
-        </div>
-        <div class="r-note-col">
-          ${isUnlocked
-            ? `<input class="r-note-input" placeholder="${L.notePlaceholder}" value="${rally.note||''}" onchange="updateNote('enemy',${rally.id},this.value)" onclick="event.stopPropagation()">`
-            : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
-        </div>
-        <span class="r-badge idle">${L.badgeReady}</span>
-        <span class="r-time">${fmt(ENEMY_BASE)}</span>
-        <div style="display:flex;gap:5px;align-items:center">
-          ${isUnlocked && !rally.started && !rally.canceled ? `<button class="e-start-btn" onclick="startEnemyRallyFb(${rally.id})">${L.eStartBtn}</button>` : ""}
           ${isUnlocked && rally.started && !rally.canceled ? `<button class="cancel-btn" onclick="cancelRally('enemy',${rally.id})">${L.cancelBtn}</button>` : ""}
           ${showDelete ? `<button class="del-btn" onclick="deleteRally('enemy',${rally.id})">✕</button>` : ""}
         </div>
@@ -1572,18 +1562,7 @@ function renderTeam(team) {
           
           <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
           
-        </div>
-        <div class="r-note-col">
-          ${isUnlocked
-            ? `<input class="r-note-input" placeholder="${L.notePlaceholder}" value="${rally.note||''}" onchange="updateNote('${team}',${rally.id},this.value)" onclick="event.stopPropagation()">`
-            : rally.note ? `<span class="r-note-text">${rally.note}</span>` : ''}
-        </div>
-        <span class="r-badge idle">${L.badgeReady}</span>
-        <span class="r-time">${fmt(BASE_TIME)}</span>
-        <div style="display:flex;gap:5px;align-items:center">
-          ${isUnlocked && T.started && !rally.canceled ? `<button class="cancel-btn" onclick="cancelRally('${team}',${rally.id})">${L.cancelBtn}</button>` : ""}
           ${showDelete ? `<button class="del-btn" onclick="deleteRally('${team}',${rally.id})">✕</button>` : ""}
-          
         </div>
         <div class="canceled-overlay${rally.canceled ? "" : " hidden"}">
           <span class="canceled-text">${L.canceledText}</span>
