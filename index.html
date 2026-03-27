@@ -294,6 +294,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
         <button class="lang-btn" onclick="setLang('ru')">РУ</button>
         <button class="lang-btn" onclick="setLang('ar')">عر</button>
         <button class="lang-btn" onclick="setLang('fr')">FR</button>
+        <button class="lang-btn" onclick="setLang('th')">ไทย</button>
       </div>
       <div class="logo" id="site-title">SvS Castle <span>Timer</span></div>
       <button class="lock-btn" id="lock-btn" onclick="toggleLock()">
@@ -743,7 +744,53 @@ const LANGS = {
     petStart: '▶ Démarrer',
     petStop: '⏹ Arrêter',
     siteTitle: 'SvS Château <span>Minuterie</span>',
-    credit: 'Créé par <span class="rainbow">Jilli</span> &middot; State 2691'
+    credit: 'Créé par <span class="rainbow">Jilli</span> &middot; State 2691',
+  th: {
+    nameLabel:    "ชื่อผู้นำแรลลี่",
+    marchLabel:   "เวลาเดินทัพ (วิ)",
+    teamLabel:    "ทีม",
+    addBtn:       "+ เพิ่ม",
+    mainTitle:    "แรลลี่หลัก",
+    counterTitle: "แรลลี่ตอบโต้",
+    enemyTitle:   "แรลลี่ศัตรู",
+    optMain:      "แรลลี่หลัก",
+    optCounter:   "แรลลี่ตอบโต้",
+    optEnemy:     "แรลลี่ศัตรู",
+    startBtn:     "▶ เริ่ม",
+    resetBtn:     "↺ รีเซ็ต",
+    errName:      "กรุณาใส่ชื่อ",
+    errFmt:       "กรุณาใส่วินาทีที่ถูกต้อง",
+    empty:        "ไม่มีแรลลี่",
+    badgeReady:   "พร้อม",
+    badgeWait:    "รอ",
+    badgeRally:   "แรลลี่",
+    badgeMarch:   "เดินทัพ",
+    badgeDone:    "เสร็จ ✓",
+    grText:       "เตรียมพร้อม!!",
+    startText:    "เริ่ม!",
+    eStartBtn:    "▶",
+    autoNote:     "ศัตรูเริ่มกระตุ้น <span>แรลลี่ตอบโต้</span>",
+    pinTitle:     "PIN ผู้ดูแล",
+    pinSub:       "ใส่ PIN เพื่อปลดล็อกการแก้ไข",
+    pinOk:        "ปลดล็อก",
+    pinCancel:    "ยกเลิก",
+    pinErr:       "PIN ไม่ถูกต้อง",
+    lockLabel:    "ล็อก",
+    unlockLabel:  "ปลดล็อก",
+    connecting:   "กำลังเชื่อมต่อ...",
+    hideBtn:      "ซ่อน",
+    showBtn:      "แสดง",
+    restartBtn:   "↺ รีสตาร์ท",
+    cancelBtn:    "✕ ยกเลิก",
+    canceledText: "แรลลี่ถูกยกเลิก",
+    restartText:  "รีสตาร์ท รีสตาร์ท รีสตาร์ท",
+    notePlaceholder: "โน้ต...",
+    petLabel:     "เพท",
+    petStart:     "▶ เริ่ม",
+    petStop:      "⏹ หยุด",
+    siteTitle:    "SvS ปราสาท <span>ตัวจับเวลา</span>",
+    credit:       "สร้างโดย <span class=\"rainbow\">Jilli</span> &middot; State 2691"
+  }
   }
 };
 
@@ -752,7 +799,7 @@ function setLang(newLang) {
     L    = LANGS[lang];
 
   
-    const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR"};
+    const langLabels = {en:"EN", kr:"한국어", tr:"TR", zh:"中文", ru:"РУ", ar:"عر", fr:"FR", th:"ไทย"};
     document.querySelectorAll(".lang-btn").forEach(btn => {
    btn.classList.toggle("active", btn.textContent === langLabels[lang]);
     });
@@ -1205,18 +1252,15 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
           clearInterval(iv);
           cnt2.className   = "reopen-count start";
           cnt2.textContent = L.startText;
-          beepStart(); 
+          if (r.delay === 0) beepStart();
 
-          
           setTimeout(() => {
             if (ov2) ov2.classList.add("hidden");
             const txt2 = document.getElementById("reopen-txt-counter-" + r.id);
             if (txt2) txt2.style.display = "";
 
-            
             if (r.delay === maxDelay) {
               isReopening = false;
-              
               renderTeam("counter");
             }
           }, 800);
