@@ -1583,7 +1583,7 @@ function renderTeam(team) {
         <div style="display:flex;gap:5px;align-items:center">
           ${isUnlocked && T.started && !rally.canceled ? `<button class="cancel-btn" onclick="cancelRally('${team}',${rally.id})">${L.cancelBtn}</button>` : ""}
           ${showDelete ? `<button class="del-btn" onclick="deleteRally('${team}',${rally.id})">✕</button>` : ""}
-          ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ""}
+          
         </div>
         <div class="canceled-overlay${rally.canceled ? "" : " hidden"}">
           <span class="canceled-text">${L.canceledText}</span>
