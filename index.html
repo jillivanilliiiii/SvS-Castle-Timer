@@ -1235,7 +1235,10 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
       cnt.textContent = count;
       cnt.className   = "reopen-count";
       cnt.classList.remove("pulse"); void cnt.offsetWidth; cnt.classList.add("pulse");
-      if (r.delay === 0) beepTick();
+      // Only the first rally to start beeps (delay===0), others wait their turn
+      // Once the first rally finishes (count <= r.delay), this rally takes over beeping
+      const shouldBeep = () => count <= REOPEN_BASE;
+      if (shouldBeep()) beepTick();
 
       const iv = setInterval(() => {
         count--;
@@ -1247,12 +1250,12 @@ function runRestartSequence(counterRallies, enemyRalliesUpdate) {
           cnt2.textContent = count;
           cnt2.className   = "reopen-count" + (count <= 2 ? " red" : "");
           cnt2.classList.remove("pulse"); void cnt2.offsetWidth; cnt2.classList.add("pulse");
-          if (r.delay === 0) beepTick();
+          if (shouldBeep()) beepTick();
         } else {
           clearInterval(iv);
           cnt2.className   = "reopen-count start";
           cnt2.textContent = L.startText;
-          if (r.delay === 0) beepStart();
+          if (shouldBeep()) beepStart();
 
           setTimeout(() => {
             if (ov2) ov2.classList.add("hidden");
