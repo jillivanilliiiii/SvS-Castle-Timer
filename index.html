@@ -176,13 +176,14 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 
 .r-left{display:flex;flex-direction:column;justify-content:center;min-width:0;overflow:hidden}
 .r-pet-col{display:flex;align-items:center;gap:6px;min-width:0}
+.pet-time-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
 .r-note-col{display:flex;align-items:center;min-width:0;flex:2}
 .r-name{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;max-width:8ch}
 .r-sub{font-size:13px;color:var(--muted);margin-top:3px;letter-spacing:.5px}
 .pet-col{display:flex;align-items:center;gap:3px;max-width:80px}
 .pet-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;flex-shrink:0}
 .pet-time{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#a78bfa;white-space:nowrap;min-width:52px}
-.pet-btn{padding:2px 7px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.pet-btn{padding:1px 5px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.35);border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .pet-btn:hover{background:rgba(167,139,250,0.3)}
 .pet-btn.active{background:rgba(167,139,250,0.2);border-color:#a78bfa}
 .pet-bar{flex:1;height:3px;background:rgba(167,139,250,0.12);border-radius:2px;overflow:hidden;min-width:40px}
@@ -1581,8 +1582,10 @@ function renderTeam(team) {
         <div class="r-pet-col">
           <span class="pet-label">${L.petLabel}</span>
           <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
-          <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-          ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
+          <div class="pet-time-wrap">
+            <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
+            ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
+          </div>
         </div>
         <div class="r-note-col">
           ${isUnlocked
