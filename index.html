@@ -1580,9 +1580,9 @@ function renderTeam(team) {
         <div class="r-left"><div class="r-name">${rally.name}</div></div>
         <div class="r-pet-col">
           <span class="pet-label">${L.petLabel}</span>
-          
+          <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
           <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
-          
+          ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
         </div>
         <div class="r-note-col">
           ${isUnlocked
