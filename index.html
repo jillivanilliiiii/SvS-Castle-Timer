@@ -22,7 +22,7 @@
   --text:#dde8ff;--muted:#5a7aaa;--gold:#fbbf24;
   --red:#ef4444;--red-border:rgba(239,68,68,0.35);
   --main:#7eb8ff;--main-border:rgba(126,184,255,0.3);
-  --counter:#34d399;--counter-border:rgba(52,211,153,0.3);
+  --counter:#7eb8ff;--counter-border:rgba(126,184,255,0.3);
 }
 
 html,body{height:100%;background:var(--bg)}
@@ -47,6 +47,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .credit{text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 0;opacity:.6}
 @keyframes rainbow{0%{background-position:200% 50%}100%{background-position:0% 50%}}
 .rainbow{background:linear-gradient(90deg,#ff0000,#ff7700,#ffff00,#00ff00,#00ffff,#0077ff,#ff00ff,#ff0000);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbow 6s linear infinite;font-weight:700}
+.credit-rainbow{background:linear-gradient(90deg,#ff0000,#ff7700,#ffff00,#00ff00,#00ffff,#0077ff,#ff00ff,#ff0000);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbow 6s linear infinite}
 .credit-mobile{display:none}
 @media(max-width:600px){
   .credit-desktop{display:none}
@@ -146,7 +147,7 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .team-panel.enemy .t-reset{border:1px solid var(--red-border);color:var(--muted)}
 .t-reset:hover{opacity:.7}
 .rally-list{display:flex;flex-direction:column;gap:8px}
-.rally-row{display:grid;grid-template-columns:130px 170px minmax(80px,1fr) 110px 80px auto;align-items:center;gap:0 18px;padding:12px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:62px}
+.rally-row{display:grid;grid-template-columns:130px 120px minmax(120px,1fr) 110px 80px auto;align-items:center;gap:0 14px;padding:12px 18px;border-radius:10px;position:relative;overflow:hidden;transition:border-color .3s;border:1px solid rgba(80,120,255,0.12);min-height:62px}
 .team-panel.enemy .rally-row{border-color:rgba(239,68,68,0.12)}
 .rally-row .pb{position:absolute;bottom:0;left:0;height:3px;transition:width .5s linear}
 .team-panel.main .rally-row .pb{background:linear-gradient(90deg,var(--main),var(--green))}
@@ -188,12 +189,12 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
 .pet-btn.active{background:rgba(167,139,250,0.2);border-color:#a78bfa}
 .pet-bar{flex:1;height:3px;background:rgba(167,139,250,0.12);border-radius:2px;overflow:hidden;min-width:40px}
 .pet-bar-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#7eb8ff);border-radius:2px;transition:width .5s linear}
-.r-note-col{display:flex;align-items:center;min-width:0;overflow:hidden}
+.r-note-col{display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden}
 .r-note-wrap{display:flex;align-items:center;justify-content:flex-start}
-.r-note-input{background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.3);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;padding:2px 6px;width:100%;letter-spacing:.5px;text-align:left;transition:border-color .2s}
+.r-note-input{background:transparent;border:none;border-bottom:1px solid rgba(126,184,255,0.3);color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;outline:none;padding:2px 6px;width:100%;letter-spacing:.5px;text-align:center;transition:border-color .2s}
 .r-note-input:focus{border-bottom-color:var(--accent)}
 .r-note-input::placeholder{color:var(--muted);opacity:.6}
-.r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-note-text{font-size:15px;color:var(--accent);font-weight:600;letter-spacing:.5px;opacity:.85;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
 .r-right{display:contents}
 @media(max-width:600px){
   .rally-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;min-height:40px}
@@ -359,10 +360,10 @@ canvas#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z
         <div class="auto-note" id="auto-note"></div>
       </div>
     </div>
-    <div class="credit credit-desktop" style="text-align:center;margin-top:14px" id="credit-desktop">Created by <span class="rainbow">Jilli</span> &middot; State 2691</div>
+    <div class="credit credit-desktop credit-rainbow" style="text-align:center;margin-top:14px" id="credit-desktop">Created by Jilli &middot; State 2691</div>
   </div>
   <div class="connecting" id="connecting">Connecting...</div>
-  <div class="credit credit-mobile" id="credit-mobile">Created by <span class="rainbow">Jilli</span> &middot; State 2691</div>
+  <div class="credit credit-mobile credit-rainbow" id="credit-mobile">Created by Jilli &middot; State 2691</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1146,13 +1147,15 @@ function startPetTicker() {
 
 const pendingCancelResets = new Set();
 function cancelRally(team, id) {
-  
   stopLocalTicker(team);
+  stopAllAudio();
+  document.querySelectorAll(`#list-${team} .row-overlay`).forEach(o => o.classList.add("hidden"));
 
   const updated = STATE[team].rallies.map(r =>
     r.id === id ? { ...r, canceled: true, started: false, timerStart: null } : r
   );
   fbSet(team + "/rallies", updated);
+  if (team !== "enemy") fbUpdate(team, { started: false, timerStart: null });
 
   
   const key = team + "_" + id;
@@ -1581,7 +1584,6 @@ function renderTeam(team) {
         <div class="r-left"><div class="r-name">${rally.name}</div></div>
         <div class="r-pet-col">
           <span class="pet-label">${L.petLabel}</span>
-          <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-enemy-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
           <div class="pet-time-wrap">
             <span class="pet-time" id="pet-time-enemy-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('enemy',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
@@ -1619,7 +1621,6 @@ function renderTeam(team) {
         <div class="r-left"><div class="r-name">${rally.name}</div></div>
         <div class="r-pet-col">
           <span class="pet-label">${L.petLabel}</span>
-          <div class="pet-bar"><div class="pet-bar-fill" id="pet-bar-${team}-${rally.id}" style="width:${rally.petStart ? Math.max(0,(1-((Date.now()-rally.petStart)/1000/7200))*100).toFixed(1)+'%' : '100%'}"></div></div>
           <div class="pet-time-wrap">
             <span class="pet-time" id="pet-time-${team}-${rally.id}">${rally.petStart ? fmtLong(Math.max(0,7200-((Date.now()-rally.petStart)/1000))) : fmtLong(7200)}</span>
             ${isUnlocked ? `<button class="pet-btn${rally.petStart ? ' active' : ''}" onclick="togglePet('${team}',${rally.id})">${rally.petStart ? L.petStop : L.petStart}</button>` : ''}
