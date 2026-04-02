@@ -746,7 +746,8 @@ const LANGS = {
     petStart: '▶ Démarrer',
     petStop: '⏹ Arrêter',
     siteTitle: 'SvS Château <span>Minuterie</span>',
-    credit: 'Créé par Jilli &middot; State 2691',
+    credit: 'Créé par Jilli &middot; State 2691'
+  },
   th: {
     nameLabel:    "ชื่อผู้นำแรลลี่",
     marchLabel:   "เวลาเดินทัพ (วิ)",
@@ -792,7 +793,6 @@ const LANGS = {
     petStop:      "⏹ หยุด",
     siteTitle:    "SvS ปราสาท <span>ตัวจับเวลา</span>",
     credit:       "สร้างโดย <span class=\"rainbow\">Jilli</span> &middot; State 2691"
-  }
   }
 };
 
@@ -1039,10 +1039,11 @@ function pulseCt(el) {
 function toggleMainPanel() {
   const panel = document.querySelector(".team-panel.main");
   const btn   = document.getElementById("hide-main-btn");
+  if (!panel) return;
   const isHidden = panel.classList.contains("hidden-panel");
 
   panel.classList.toggle("hidden-panel", !isHidden);
-  btn.textContent = isHidden ? "Hide" : "Show";
+  if (btn) btn.textContent = isHidden ? L.hideBtn : L.showBtn;
 }
 
 function addRally() {
